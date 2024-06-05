@@ -1,0 +1,61 @@
+.navbar-brand {
+    margin-right: 300px;
+    margin-left: 20px;
+}
+.card-title {
+    text-align: center;
+    font-weight: bold;
+}
+.btn {
+    width: 150px;
+    color: white;
+    background-color: rgb(1, 166, 1);
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 30px;
+}
+.dropdown {
+    transition: 0.3s ease-in-out;
+}
+
+.nav-item {
+    margin: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.nav-item :hover {
+    text-decoration: underline;
+    transition: 0.1s;
+}
+body{
+    animation: gradient-animation 10s infinite;
+}
+
+.d-block {
+    height: 582.6px;
+}
+
+.carousel-control-prev-icon {
+    fill: black!important;
+}
+
+.carousel-control-next-icon {
+    fill: black!important;
+}
+width="1em" height="1em"
+
+
+
+
+@keyframes gradient-animation {
+    0% {
+        background-color: #FFDEE9; /* Light Pink */
+      }
+      50% {
+        background-color: #B5FFFC; /* Light Cyan */
+      }
+      100% {
+        background-color: #FFEEAD; /* Light Yellow */
+      }
+}
