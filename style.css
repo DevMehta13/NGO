@@ -1,61 +1,137 @@
+.back-img {
+    background-color: #c9e4f8;
+}
+.front {
+    border-radius: 10px;
+}
+
+.navbar {
+    margin-bottom: 0px;
+}
+h2 {
+    font-size: 40px;
+    text-align: left;
+    font-weight: 500;
+    font-family: 'MontserratExtraLight';
+    text-align: left; 
+    font-size: 35px; 
+}
+.feature>p {
+    text-align: justify;
+}
+.feature-icon {
+    padding: 16px;
+    border-radius: 10px;
+}
 .navbar-brand {
-    margin-right: 300px;
+    margin-right: 50px;
     margin-left: 20px;
 }
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+}
+
 .card-title {
     text-align: center;
     font-weight: bold;
 }
-.btn {
+
+#carouselExampleAutoplaying {
+    margin-bottom: 40px;
+}
+
+.btn-donation {
     width: 150px;
     color: white;
     background-color: rgb(1, 166, 1);
     font-size: 20px;
-    font-weight: bold;
     margin-right: 30px;
+    border-radius: 8px;
+    border: none;
 }
+.btn-all {
+    background-color: #2f6e9c ;
+    border: none;
+}
+
+.btn-card {
+    display: flex;
+    justify-content: center;
+}
+.card {
+    border: transparent;
+}
+.card-text {
+    text-align: justify;
+}
+
 .dropdown {
     transition: 0.3s ease-in-out;
 }
 
-.nav-item {
-    margin: 15px;
-    font-size: 20px;
-    font-weight: bold;
+.navi-item {
+    margin: 10px;
+    font-size: 15px;
+    border-radius: 15px;
 }
 
-.nav-item :hover {
+.navi-item:hover > .nav-link {
+    background-color: rgb(1, 166, 1);
+    color: white;
+    transition: 0.1s;
+    border-radius: 8px;
+}
+.navif-item:hover > .nav-link {
     text-decoration: underline;
     transition: 0.1s;
-}
-body{
-    animation: gradient-animation 10s infinite;
 }
 
 .d-block {
     height: 582.6px;
 }
 
-.carousel-control-prev-icon {
-    fill: black!important;
+.container1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
-.carousel-control-next-icon {
-    fill: black!important;
+.container2 {
+    background-color: #2f6e9c;
 }
-width="1em" height="1em"
 
-
-
-
-@keyframes gradient-animation {
-    0% {
-        background-color: #FFDEE9; /* Light Pink */
-      }
-      50% {
-        background-color: #B5FFFC; /* Light Cyan */
-      }
-      100% {
-        background-color: #FFEEAD; /* Light Yellow */
-      }
+.img-logo {
+    mix-blend-mode: multiply;
 }
+
+.card {
+    border: 1px outset #737373;
+    background-color: rgba(241, 240, 240, 0);
+}
+
+.carousel-thumbnail {
+    width: 300px; 
+    height: 300px; 
+    object-fit: cover;  
+  }
+
+  .carousel-text {
+    color: white; 
+    text-align: justify;
+    font-family: 'MontserratExtraLight';
+  }
+
+  .carousel-item1 {
+    padding: 20px; 
+    padding-bottom: 60px;
+  }
+
+  .carousel-inner1 {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+  }
