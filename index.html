@@ -8,139 +8,243 @@
     <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary ">
+  
+  
+    <nav class="navbar navbar-expand-lg " style="background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;">
         <div class="container-fluid ">
-          <a class="navbar-brand" href="#"><img src="./LOGO.jpg" alt="LOGO" height="64px"/></a>
+          <a class="navbar-brand img-logo" href="#"><img src="./LOGO.jpg" alt="LOGO" height="60px"/>Ek Prayas</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              <li class="nav-item navi-item">
                 <a class="nav-link active" aria-current="page" href="#">About Us</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item navi-item">
                 <a class="nav-link active" aria-current="page" href="#">What We Do</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item navi-item">
                 <a class="nav-link active" aria-current="page" href="#">Get Involved</a>
               </li>
-              <li class="nav-item dropdown">
+              <li class="nav-item dropdown navi-item">
                 <a class="nav-link dropdown-toggle nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Contact Us
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Contacts</a></li>
-                  <li><a class="dropdown-item" href="#">Instagram</a></li>
-                  <li><a class="dropdown-item" href="#">Facebook</a></li>
+                  <li class="dropdown-flex"><a class="dropdown-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" height = 20px style="margin-right:10px;"  viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>  Contacts</a>
+                      <a class="dropdown-item" href="https://www.instagram.com/virat.kohli/" target ="_blank"><img style="mix-blend-mode: multiply; height: 20px; margin-left: -1px; margin-right: 13px;" src="./instagram.png" alt=""/>   Instagram</a>
+                      <a class="dropdown-item" href="https://www.facebook.com/share/v6XbXmgR8Je3wsaD/?mibextid=qi2Omg " target ="_blank"><img style="height: 20px; mix-blend-mode: multiply; margin-left: -1px; margin-right: 13px;" src="./facebook.png"/>   Facebook</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown navi-item">
+                <a class="nav-link dropdown-toggle nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  More
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Events</a></li>
+                  <li><a class="dropdown-item" href="#">Members</a></li>
+                  <li><a class="dropdown-item" href="#">Media Coverages</a></li>
                 </ul>
               </li>
             </ul>
             <form class="d-flex" role="search">
               <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
-              <button class="btn btn-outline-success" type="submit">Donate</button>
+              <button class="btn btn-outline-success btn-donation" type="submit">Donate</button>
             </form>
           </div>
         </div>
       </nav>
-      <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="./helping1.jpg" class="d-block w-100" alt="blind Paper">
+      <div class="back-img"> 
+      <div class="px-4 py-5 my-2 text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis" >EK Prayas Manavtakior </h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3 mb-4 btn-all">Who Are We</button>
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4 mb-4">Contact Us</button>
           </div>
-          <div class="carousel-item">
-            <img src="./helping2.jpg" class="d-block w-100" alt="poster">
+          <img class="front" src="./front.jpg" alt="front" height="400px" width="700px">
+          
+        </div>
+      </div>
+        </div>
+      </div>  
+
+      </div>
+      <div class="container px-4 mt-5" id="featured-3">
+        <h2 class="pb-2  border-bottom">What Are Our Aims?</h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+          <div class="feature col">
+            <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
+              <img class="img-aim" src="./briefcase.svg" height="30px" />
+            </div>
+            <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
           </div>
-          <div class="carousel-item">
-            <img src="./helping3.jpg" class="d-block w-100" alt="award">
+          <div class="feature col">
+            <div class="feature-icon d-inline-flex align-items-center justify-content-center  bg-gradient fs-2 mb-3 " style="background-color: #2f6e9c;">
+              <img class="img-aim" src="./briefcase.svg" height="30px" />
+            </div>
+            <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+            
+          </div>
+          <div class="feature col">
+            <div class="feature-icon d-inline-flex align-items-center justify-content-center  bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
+              <img class="img-aim" src="./briefcase.svg" height="30px" />
+            </div>
+            <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+            
           </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+      </div>
+    
+<div class="container">
+        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="./helping1.jpg" class="d-block w-100" alt="blind Paper">
+              </div>
+              <div class="carousel-item">
+                <img src="./helping2.jpg" class="d-block w-100" alt="poster">
+              </div>
+              <div class="carousel-item">
+                <img src="./helping3.jpg" class="d-block w-100" alt="award">
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      <h2 style="margin-left: 110px;">How We Work To Make a Difference</h2>
+      <hr />
+      <div class="container1">
+        
+        <div class="card" style="width: 20rem;">
+        <img src="./card1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Campaign 1</h5>
+          <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, </p>
+          <a href="#" class="btn btn-primary btn-card btn-all">Donate</a>
+        </div>
+        </div>
+        <div class="card" style="width: 20rem;">
+            <img src="./card2.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Campaign 2</h5>
+              <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, </p>
+              <a href="#" class="btn btn-primary btn-card btn-all">Donate</a>
+            </div>
+        </div>
+        <div class="card" style="width: 20rem;">
+            <img src="./card3.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Campaign 3</h5>
+              <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, </p>
+              <a href="#" class="btn btn-primary btn-card btn-all">Donate</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container2">
+    <h2 style="text-align: center; color: white; padding-top: 30px;">Hear from our <span style="text-decoration: underline;">Biggest</span> Contributers</h2>
+    <div class="container" style="width: 1000px;">
+      <div id="carouselExampleAutoplaying1" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner carousel-inner1">
+          <div class="carousel-item active carousel-item1">
+            <div class="d-flex align-items-center">
+              <img src="./helping1.jpg" class="rounded-circle carousel-thumbnail" alt="blind Paper">
+              <div class="carousel-text ms-3">
+                <h5>Slide Title 1</h5>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item carousel-item1">
+            <div class="d-flex align-items-center">
+              <img src="./helping2.jpg" class="rounded-circle carousel-thumbnail" alt="poster">
+              <div class="carousel-text ms-3">
+                <h5>Slide Title 2</h5>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item carousel-item1">
+            <div class="d-flex align-items-center">
+              <img src="./helping3.jpg" class="rounded-circle carousel-thumbnail" alt="award">
+              <div class="carousel-text ms-3">
+                <h5>Slide Title 3</h5>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying1" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying1" data-bs-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Next</span>
         </button>
       </div>
-      <!-- <div class="container px-4 py-5" id="custom-cards">
-        <h2 class="pb-2 border-bottom card-title">How we work to make a difference</h2>
-        <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
-          <div class="col">
-            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('./card11.jpeg'); background-size: 100vw 100vh;
-            background-repeat: no-repeat;">
-              <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Campaign 1</h3>
-                <ul class="d-flex list-unstyled mt-auto">
-                  <li class="me-auto">
-                    <img src="./LOGO.jpg" alt="Bootstrap" width="32" height="32" class="rounded-circle border border-white">
-                  </li>
-                  <li class="d-flex align-items-center me-3">
-                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"></use></svg>
-                    <small>Earth</small>
-                  </li>
-                  <li class="d-flex align-items-center">
-                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
-                    <small>3d</small>
-                  </li>
-                </ul>
-              </div>
-            </div>
+    </div>
+  </div>
+    <div class="container">
+        <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 mt-5 border-top">
+          <div class="col mb-3">
+            <a href="/" class="d-flex align-items-center mb-3 link-body-emphasis text-decoration-none">
+              <img class="img-logo" src="./LOGO.jpg"/>
+            </a>
+            <p class="text-body-secondary">© 2024</p>
           </div>
-    
-          <div class="col">
-            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('./card12.jpeg'); background-size: 100vw 100vh;
-            background-repeat: no-repeat;">
-              <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Campaign 2</h3>
-                <ul class="d-flex list-unstyled mt-auto">
-                  <li class="me-auto">
-                    <img src="./LOGO.jpg" alt="Bootstrap" width="32" height="32" class="rounded-circle border border-white">
-                  </li>
-                  <li class="d-flex align-items-center me-3">
-                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"></use></svg>
-                    <small>Pakistan</small>
-                  </li>
-                  <li class="d-flex align-items-center">
-                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
-                    <small>4d</small>
-                  </li>
-                </ul>
-              </div>
-            </div>
+      
+          <div class="col mb-3">
+      
           </div>
-    
-          <div class="col">
-            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg" style="background-image: url('./card13.jpeg'); background-size: 100vw 100vh;
-            background-repeat: no-repeat;">
-              <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
-                <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Campaign 3</h3>
-                <ul class="d-flex list-unstyled mt-auto">
-                  <li class="me-auto">
-                    <img src="./LOGO.jpg" alt="Bootstrap" width="32" height="32" class="rounded-circle border border-white">
-                  </li>
-                  <li class="d-flex align-items-center me-3">
-                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"></use></svg>
-                    <small>California</small>
-                  </li>
-                  <li class="d-flex align-items-center">
-                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
-                    <small>5d</small>
-                  </li>
-                </ul>
-              </div>
-            </div>
+      
+          <div class="col mb-3">
+            <h5>Section</h5>
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            </ul>
           </div>
-        </div>
-      </div> -->
-      <div class="card" style="width: 18rem;">
-        <img src="..." class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
+      
+          <div class="col mb-3">
+            <h5>Section</h5>
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            </ul>
+          </div>
+      
+          <div class="col mb-3">
+            <h5>Section</h5>
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+              <li class="nav-item mb-2 navif-item"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            </ul>
+          </div>
+        </footer>
       </div>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
