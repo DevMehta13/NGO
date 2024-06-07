@@ -151,6 +151,11 @@ h2 {
     .front {
         max-width: 100%;
     }
+    h2 {
+        display: flex;  
+        justify-content: center;
+
+    }
 }
 
 @media (min-width: 769px) {
