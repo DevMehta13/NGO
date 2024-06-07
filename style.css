@@ -151,14 +151,15 @@ h2 {
     .front {
         max-width: 100%;
     }
-    h2 {
+    .card-h2 {
         font-size: 28px;
         display: flex;  
         justify-content: center;
-
+    }
+    .trusty-title {
+        font-size: 25px;
     }
 }
-
 @media (min-width: 769px) {
     .front {
         max-width: 600px;
