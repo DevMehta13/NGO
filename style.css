@@ -152,6 +152,7 @@ h2 {
         max-width: 100%;
     }
     h2 {
+        font-size: 28px;
         display: flex;  
         justify-content: center;
 
