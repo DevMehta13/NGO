@@ -1,8 +1,13 @@
 .back-img {
     background-color: #c9e4f8;
+
 }
 .front {
     border-radius: 10px;
+}
+.Heading{
+    display: flex;
+    flex-direction: column;
 }
 
 .navbar {
@@ -113,6 +118,7 @@ h2 {
     background-color: rgba(241, 240, 240, 0);
 }
 
+
 .carousel-thumbnail {
     width: 300px; 
     height: 300px; 
@@ -135,3 +141,16 @@ h2 {
     align-items: center;
     justify-content: left;
   }
+
+
+  @media (max-width: 768px) {
+    .front {
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 769px) {
+    .front {
+        max-width: 600px;
+    }
+}
