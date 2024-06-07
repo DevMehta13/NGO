@@ -2,7 +2,7 @@
     background-color: #c9e4f8;
 
 }
-.front {
+.img-fluid {
     border-radius: 10px;
 }
 .Heading{
@@ -17,8 +17,12 @@ h2 {
     font-size: 40px;
     text-align: left;
     font-weight: 500;
-    font-family: 'MontserratExtraLight';
+    font-family: Arial,  sans-serif;
+    color: #2f6e9c;
     text-align: left; 
+    font-weight: bolder;
+    text-decoration: underline;
+    text-decoration-color: rgb(1, 166, 1);
     font-size: 35px; 
 }
 .feature>p {
