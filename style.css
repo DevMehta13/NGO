@@ -160,6 +160,7 @@ h2 {
         font-size: 25px;
     }
 }
+
 @media (min-width: 769px) {
     .front {
         max-width: 600px;
