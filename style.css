@@ -1,5 +1,14 @@
+/* Hello this is a test comment from Vedesh P */
+/* Adding Variables for colors and other stuff */
+:root {
+    --light-blue: #c9e4f8;
+    --green: rgb(1, 166, 1);
+    --dark-dim-blue: #2f6e9c;
+}
+/* By VedeshP */
+
 .back-img {
-    background-color: #c9e4f8;
+    background-color: var(--light-blue);
 
 }
 .img-fluid {
@@ -18,11 +27,11 @@ h2 {
     text-align: left;
     font-weight: 500;
     font-family: Arial,  sans-serif;
-    color: #2f6e9c;
+    color: var(--dark-dim-blue);
     text-align: left; 
     font-weight: bolder;
     text-decoration: underline;
-    text-decoration-color: rgb(1, 166, 1);
+    text-decoration-color: var(--green);
     font-size: 35px; 
 }
 .feature>p {
@@ -54,14 +63,14 @@ h2 {
 .btn-donation {
     width: 150px;
     color: white;
-    background-color: rgb(1, 166, 1);
+    background-color: var(--green);
     font-size: 20px;
     margin-right: 30px;
     border-radius: 8px;
     border: none;
 }
 .btn-all {
-    background-color: #2f6e9c ;
+    background-color: var(--dark-dim-blue) ;
     border: none;
 }
 
@@ -87,7 +96,7 @@ h2 {
 }
 
 .navi-item:hover > .nav-link {
-    background-color: rgb(1, 166, 1);
+    background-color: var(--green);
     color: white;
     transition: 0.1s;
     border-radius: 8px;
@@ -110,7 +119,7 @@ h2 {
 }
 
 .container2 {
-    background-color: #2f6e9c;
+    background-color: var(--dark-dim-blue);
 }
 
 .img-logo {
@@ -160,7 +169,6 @@ h2 {
         font-size: 25px;
     }
 }
-
 @media (min-width: 769px) {
     .front {
         max-width: 600px;
