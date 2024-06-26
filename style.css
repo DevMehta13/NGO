@@ -191,3 +191,49 @@ h2 {
         max-width: 600px;
     }
 }
+
+/* By Meet Jain */
+/*Designing footer*/
+
+.img-logo {
+    max-width: 1000em; /* Adjust if needed */
+  }
+  
+  .text-body-secondary {
+    color: #6c757d;
+  }
+  
+  .nav-item a {
+    color: #6c757d;
+    text-decoration: none;
+  }
+  
+  .nav-item a:hover {
+    color: #000;
+    text-decoration: underline;
+  }
+  
+  .maps iframe {
+    border-radius: 8px;
+  }
+  
+  .address {
+    margin-bottom: 15px;
+  }
+  
+  @media (max-width: 768px) {
+    .d-flex {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .maps iframe {
+      width: 100%; /* Responsive width for smaller screens */
+      height: 200px; /* Adjust height if needed */
+    }
+  
+    .me-md-3 {
+      margin-right: 0; /* Remove right margin on smaller screens */
+    }
+  }
+/*End of footer styling*/
