@@ -7,6 +7,23 @@
 }
 /* By VedeshP */
 
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    margin: 4px;
+    background: #FFFFFF;
+    border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #A0A0A0;
+    border-radius: 12px;
+}
+/* Edited By VedeshP */
+
+
 .back-img {
     background-color: var(--light-blue);
 
