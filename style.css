@@ -4,22 +4,29 @@
     --light-blue: #c9e4f8;
     --green: rgb(1, 166, 1);
     --dark-dim-blue: #2f6e9c;
+    --page-bg: #FFFFFF;
 }
 /* By VedeshP */
 
 ::-webkit-scrollbar {
-    width: 4px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
     margin: 4px;
-    background: #FFFFFF;
+    background: var(--page-bg);
     border-radius: 12px;
 }
 
 ::-webkit-scrollbar-thumb {
     background: #A0A0A0;
     border-radius: 12px;
+    border: solid 2px;
+    border-color: var(--page-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #696969;
 }
 /* Edited By VedeshP */
 
