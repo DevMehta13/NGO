@@ -56,7 +56,7 @@
                   <li class="dropdown-flex">
                       <a class="dropdown-item" href="./blind.html"> Registration for paper writing of blind students</a>
                       <a class="dropdown-item" href="./book.html" >Registration for books recording </a>
-                      <a class="dropdown-item" href="./Team.html">Team Members</a>
+                      <a class="dropdown-item" href="./Team.html" >Team Members</a>
                       <a class="dropdown-item" href="#" >Terms & Condition</a>
                   </li>
                 </ul>
@@ -120,12 +120,8 @@
       
                   <div class="gen">
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-                      <label class="form-check-label" for="inlineRadio1">Male</label>
-                    </div>
-                    <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-                      <label class="form-check-label" for="inlineRadio2">Female</label>
+                      <label class="form-check-label" for="inlineRadio2">Female <span class="text-body-secondary"><em><small>(only female candidates are accepted) </small></em></span></label>
                     </div>
                   </div>
       
@@ -187,11 +183,29 @@
                     </div>
                   </div>
 
+                  <div class="col-12">
+                    <label for="address" class="form-label">Aadhar number <span class="text-body-secondary"><em><small>(required) </small></em></span></label>
+                    <input type="number" class="form-control" id="address" placeholder="(12 digits)" required>
+                  </div>
+                  <div class="col-12">
+                    <label for="address" class="form-label">Pan number <span class="text-body-secondary"><em><small>(required) </small></em></span></label>
+                    <input type="text" class="form-control" id="address" placeholder="(10 characters)" required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="formFile" class="form-label"> Aadhar Card  <span class="text-body-secondary"><em><small>(required) </small></em></span></label>
+                    <input class="form-control" type="file" id="formFile">
+                  </div>
+                  <div class="mb-3">
+                    <label for="formFile" class="form-label"> Pan Card  <span class="text-body-secondary"><em><small>(required) </small></em></span></label>
+                    <input class="form-control" type="file" id="formFile">
+                  </div>
+
                   
       
                   
                   <div class="mb-3">
-                <label for="formFile" class="form-label">Upload Photo <span class="text-body-secondary"><em><small>(required) </small></em></span></label>
+                <label for="formFile" class="form-label">Upload  your Photo <span class="text-body-secondary"><em><small>(required) </small></em></span></label>
                 <input class="form-control" type="file" id="formFile">
               </div>
       
