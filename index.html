@@ -9,7 +9,24 @@
     <link id="favicon" href="./tralogo.jpg" rel="icon">
 </head>
 <body>
-  
+  <div class="popup-overlay" id="popup">
+    <div class="popup-content">
+        <img src="LOGO.jpg" alt="Popup Image"> <!-- Replace with your image URL -->
+        <h2>Welcome to Our Website</h2>
+        <p>We are glad to have you here. Check out our latest updates and news.</p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        document.getElementById('popup').classList.add('active');
+    };
+
+    function closePopup() {
+        document.getElementById('popup').classList.remove('active');
+    }
+</script>
   
   <nav class="navbar navbar-expand-lg " style="background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;">
     <div class="container-fluid ">
