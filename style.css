@@ -30,6 +30,14 @@
 }
 /* Edited By VedeshP */
 
+/* For svg images */
+.icon {
+    fill: var(--page-bg);
+    display: inline-flex;
+    z-index: 1;
+    padding: 4px;
+}
+/* Added by VedeshP */
 
 .back-img {
     background-color: var(--light-blue);
