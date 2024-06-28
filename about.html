@@ -198,67 +198,82 @@
                             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                             <div>
                                 <style>
-                                    .popup {
-                                        position: fixed;
-                                        z-index: 1;
-                                        left: 0;
-                                        top: 0;
-                                        width: 100%;
-                                        height: 100%;
-                                        overflow: auto;
-                                        background-color: rgba(0, 0, 0, 0.6);
-                                        display: none;
-                                        transition: all 0.5s ease-in-out;
-                                    }
-                                    .popup-content {
-                                        background-color: #fefefe;
-                                        margin: 10% auto;
-                                        padding: 30px;
-                                        border-radius: 10px;
-                                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-                                        width: 40%;
-                                        font-weight: bolder;
-                                        text-align: center;
-                                        transition: all 0.5s ease-in-out;
-                                    }
-                                    .popup-content h1 {
-                                        color: #2f6e9c;
-                                        font-weight: bold;
-                                        text-decoration: underline;
-                                        text-decoration-color: rgb(1, 166, 1);
+    .popup {
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: none;
+        transition: all 0.5s ease-in-out;
+    }
 
-                                    }
-                                    .popup-content p {
-                                        font-size: 12px;
-                                        color: #333;
-                                    }
-                                    .popup-content button {
-                                        display: inline-block;
-                                        padding: 10px 20px;
-                                        margin-top: 20px;
-                                        background-color: #2f6e9c;
-                                        color: #fff;
-                                        border: none;
-                                        border-radius: 5px;
-                                        cursor: pointer;
-                                        transition: background-color 0.5s;
-                                    }
-                                    .popup-content button:hover {
-                                        background-color: #45a049;
-                                    }
-                                    .show {
-                                        display: block;
-                                        animation: fadeIn 0.5s;
-                                    }
-                                    @keyframes fadeIn {
-                                        from {
-                                            opacity: 0;
-                                        }
-                                        to {
-                                            opacity: 1;
-                                        }
-                                    }
-                                </style>
+    .popup-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        width: 80%; /* Adjusted width for mobile */
+        font-weight: bolder;
+        text-align: center;
+        transition: all 0.5s ease-in-out;
+    }
+
+    .popup-content h1 {
+        color: #2f6e9c;
+        font-weight: bold;
+        text-decoration: underline;
+        text-decoration-color: rgb(1, 166, 1);
+    }
+
+    .popup-content p {
+        font-size: 14px; /* Increased font size for better readability */
+        color: #333;
+        margin-bottom: 15px; /* Added margin for better spacing */
+    }
+
+    .popup-content button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 15px; /* Adjusted margin for better spacing */
+        background-color: #2f6e9c;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.5s;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .popup-content {
+            width: 90%; /* Adjust width further for very small screens */
+            padding: 15px; /* Adjust padding for smaller screens */
+        }
+    }
+
+    .popup-content button:hover {
+        background-color: #45a049;
+    }
+
+    .show {
+        display: block;
+        animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+</style>
                                 
                                 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                     <button class="btn btn-primary btn-card btn-all" id="myButton1">Know More</button>
