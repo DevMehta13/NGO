@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css"/>
 
   <style>
     .card-img-top {
@@ -18,19 +19,45 @@
       object-fit: cover;
     }
     /* Styles for card hover effect */
-.card {
+.cardGallery {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   height: auto;
 }
 
-.card:hover {
+.cardGallery:hover {
   transform: scale(1.05); /* Adjust the scale factor for zoom effect */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Adjust shadow properties for the glow effect */
 }
-body{
-    background-color: aliceblue;
-    font-family: Arial, Helvetica, sans-serif;
-}
+.containerGallery {
+           
+           font-family: Arial, Helvetica, sans-serif;
+           animation: colorChange 20s infinite;
+           transition: background-color 2s;
+           padding: 20px;
+           border-radius: 8px;
+           text-align: center;
+       }
+
+       @keyframes colorChange {
+           0% {
+               background-color: aliceblue;
+           }
+           20% {
+               background-color: #b0e0e6; /* PowderBlue */
+           }
+           40% {
+               background-color: #add8e6; /* LightBlue */
+           }
+           60% {
+               background-color: #87ceeb; /* SkyBlue */
+           }
+           80% {
+               background-color: #87cefa; /* LightSkyBlue */
+           }
+           100% {
+               background-color: aliceblue;
+           }
+       }
 .col-md-4{
     padding: 20px;
 }
@@ -46,9 +73,14 @@ body{
    
       font-weight: bold;
     }
+
+
+
   </style>
 </head>
 <body>
+
+
   <nav class="navbar navbar-expand-lg " style="background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;">
     <div class="container-fluid ">
       <a class="navbar-brand img-logo" href="/"><img src="./LOGO.jpg" alt="LOGO" height="60px"/>Ek Prayas</a>
@@ -125,7 +157,7 @@ body{
       </div>
     </div>
   </nav>
-  <div class="container mt-5">
+  <div class="container containerGallery mt-5">
     <div class="gallery-title">
         <h1>NGO Event Gallery</h1>
       </div>
@@ -135,7 +167,7 @@ body{
     <div class="row">
       <!-- Card 1 -->
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event1Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event1Modal">
           <img src="card1.jpg" class="card-img-top" alt="Event 1">
           <div class="card-body">
             <h5 class="card-title">Event 1</h5>
@@ -181,7 +213,7 @@ body{
       
       <!-- Card 2 -->
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event2Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event2Modal">
           <img src="helping1.jpg" class="card-img-top" alt="Event 2">
           <div class="card-body">
             <h5 class="card-title">Event 2</h5>
@@ -225,7 +257,7 @@ body{
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event2Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event2Modal">
           <img src="card3.jpg" class="card-img-top" alt="Event 3">
           <div class="card-body">
             <h5 class="card-title">Event 3</h5>
@@ -269,7 +301,7 @@ body{
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event4Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event4Modal">
           <img src="card1.jpg" class="card-img-top" alt="Event 1">
           <div class="card-body">
             <h5 class="card-title">Event 1</h5>
@@ -313,7 +345,7 @@ body{
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event5Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event5Modal">
           <img src="card1.jpg" class="card-img-top" alt="Event 1">
           <div class="card-body">
             <h5 class="card-title">Event 1</h5>
@@ -357,7 +389,7 @@ body{
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event6Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event6Modal">
           <img src="card1.jpg" class="card-img-top" alt="Event 1">
           <div class="card-body">
             <h5 class="card-title">Event 1</h5>
@@ -401,7 +433,7 @@ body{
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event7Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event7Modal">
           <img src="card1.jpg" class="card-img-top" alt="Event 1">
           <div class="card-body">
             <h5 class="card-title">Event 1</h5>
@@ -445,7 +477,7 @@ body{
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event8Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event8Modal">
           <img src="card1.jpg" class="card-img-top" alt="Event 1">
           <div class="card-body">
             <h5 class="card-title">Event 1</h5>
@@ -489,7 +521,7 @@ body{
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <div class="card" data-toggle="modal" data-target="#event9Modal">
+        <div class="card cardGallery" data-toggle="modal" data-target="#event9Modal">
           <img src="card1.jpg" class="card-img-top" alt="Event 1">
           <div class="card-body">
             <h5 class="card-title">Event 1</h5>
@@ -540,7 +572,7 @@ body{
          
           <li class="page-item"><a class="page-link" href="Gallery.html">1</a></li>
           <li class="page-item"><a class="page-link" href="Gallery2.html">2</a></li>
-          <li class="page-item"><a class="page-link" href="">3</a></li>
+          <li class="page-item"><a class="page-link" href="Gallery3.html">3</a></li>
           
         </ul>
       </nav>
