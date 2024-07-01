@@ -11,22 +11,32 @@
 <body>
   <div class="popup-overlay" id="popup">
     <div class="popup-content">
-        <img src="LOGO.jpg" alt="Popup Image"> <!-- Replace with your image URL -->
-        <h2>Welcome to Our Website</h2>
-        <p>We are glad to have you here. Check out our latest updates and news.</p>
-        <button onclick="closePopup()">Close</button>
+      <img src="LOGO.jpg" alt="Popup Image"> <!-- Replace with your image URL -->
+      <h2>Welcome to Our Website</h2>
+      <p>We are glad to have you here. Check out our latest updates and news.</p>
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
     window.onload = function() {
-        document.getElementById('popup').classList.add('active');
+      // Check if the popup has already been shown in this session
+      if (!sessionStorage.getItem('popupShown')) {
+        setTimeout(function() {
+          document.getElementById('popup').classList.add('active');
+          // Set a flag in sessionStorage to indicate the popup has been shown
+          sessionStorage.setItem('popupShown', 'true');
+        }, 3000); // 3-second delay
+      }
     };
 
-    function closePopup() {
-        document.getElementById('popup').classList.remove('active');
-    }
-</script>
+    // When the user clicks anywhere outside of the modal content, close the modal
+    window.onclick = function(event) {
+      var overlay = document.getElementById('popup');
+      if (event.target == overlay) {
+        overlay.classList.remove('active');
+      }
+    };
+  </script>
   
   <nav class="navbar navbar-expand-lg " style="background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;">
     <div class="container-fluid ">
