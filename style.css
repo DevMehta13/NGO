@@ -30,14 +30,23 @@
 }
 /* Edited By VedeshP */
 
+/* For svg images */
+.icon {
+    fill: var(--page-bg);
+    display: inline-flex;
+    z-index: 1;
+    padding: 4px;
+}
+/* Added by VedeshP */
 
 .back-img {
     background-color: var(--light-blue);
 
 }
-.img-fluid {
+/* .img-fluid {
     border-radius: 10px;
-}
+} */  
+  /*This is done to set the carausal images  */
 .Heading{
     display: flex;
     flex-direction: column;
@@ -200,6 +209,66 @@ h2 {
 }
 
 /* By Meet Jain */
+/*Pop-up Box when when the web page is opened for the first time*/
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s;
+}
+
+.popup-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+}
+
+.popup-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.popup-content h2 {
+  margin-bottom: 1rem;
+}
+
+.popup-content p {
+  margin-bottom: 1rem;
+}
+
+.popup-content button {
+  padding: 0.75rem 1.5rem;
+  background: #2f6e9c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.popup-content button:hover {
+  background: #0056b3;
+}
+/*End of pop-up*/
 /*Designing footer*/
 
 .img-logo {
