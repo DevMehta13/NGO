@@ -11,32 +11,22 @@
 <body>
   <div class="popup-overlay" id="popup">
     <div class="popup-content">
-      <img src="LOGO.jpg" alt="Popup Image"> <!-- Replace with your image URL -->
-      <h2>Welcome to Our Website</h2>
-      <p>We are glad to have you here. Check out our latest updates and news.</p>
+        <img src="LOGO.jpg" alt="Popup Image"> <!-- Replace with your image URL -->
+        <h2>Welcome to Our Website</h2>
+        <p>We are glad to have you here. Check out our latest updates and news.</p>
+        <button onclick="closePopup()">Close</button>
     </div>
-  </div>
+</div>
 
-  <script>
+<script>
     window.onload = function() {
-      // Check if the popup has already been shown in this session
-      if (!sessionStorage.getItem('popupShown')) {
-        setTimeout(function() {
-          document.getElementById('popup').classList.add('active');
-          // Set a flag in sessionStorage to indicate the popup has been shown
-          sessionStorage.setItem('popupShown', 'true');
-        }, 3000); // 3-second delay
-      }
+        document.getElementById('popup').classList.add('active');
     };
 
-    // When the user clicks anywhere outside of the modal content, close the modal
-    window.onclick = function(event) {
-      var overlay = document.getElementById('popup');
-      if (event.target == overlay) {
-        overlay.classList.remove('active');
-      }
-    };
-  </script>
+    function closePopup() {
+        document.getElementById('popup').classList.remove('active');
+    }
+</script>
   
   <nav class="navbar navbar-expand-lg " style="background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;">
     <div class="container-fluid ">
@@ -114,19 +104,36 @@
       </div>
     </div>
   </nav>
-      <div class="back-img">
-        <div class="px-4 py-5 my-2 text-center">
-          <h1 class="display-5 fw-bold text-body-emphasis">EK Prayas Manavtakior</h1>
-          <div class="col-lg-6 mx-auto Heading">
-            <p class="lead mb-4">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-              <button type="button" class="btn btn-primary btn-lg px-4 gap-3 mb-4 btn-all">Who We Are</button>
-              <button type="button" class="btn btn-outline-secondary btn-lg px-4 mb-4">Contact Us</button>
-            </div>
-            <img class="img-fluid" src="./front.jpg" alt="front">
-          </div>
+  <div class="px-0 py-2 my-0 text-center">
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="./helping1.jpg" class="d-block w-100 img-fluid" alt="blind Paper">
+        </div>
+        <div class="carousel-item">
+          <img src="./helping2.jpg" class="d-block w-100 img-fluid" alt="poster">
+        </div>
+        <div class="carousel-item">
+          <img src="./helping3.jpg" class="d-block w-100 img-fluid" alt="award">
+        </div>
+        <div class="carousel-item">
+          <img src="fronts.jpg" class="d-block w-100 img-fluid" alt="poster">
         </div>
       </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+    <h1 class="display-5 fw-bold text-body-emphasis">Ek Prayas - Manavta Ki Aur</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
+    </div>
+  </div>
       
       <div class="container px-4 mt-5" id="featured-3">
         <h2 class="pb-2 border-bottom" >What Are Our Aims?</h2>
@@ -155,29 +162,9 @@
         </div>
       </div>
       
-      <div class="container">
-        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="./helping1.jpg" class="d-block w-100 img-fluid" alt="blind Paper">
-            </div>
-            <div class="carousel-item">
-              <img src="./helping2.jpg" class="d-block w-100 img-fluid" alt="poster">
-            </div>
-            <div class="carousel-item">
-              <img src="./helping3.jpg" class="d-block w-100 img-fluid" alt="award">
-            </div>
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div>
-      </div>
+      
+        
+      
       
       <h2 class="mx--4 card-h2" style="margin-left: 105px;">How We Work To Make a Difference</h2>
       <hr />
