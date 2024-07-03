@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-@app.route("/")
+@app.route("/" , methods=["GET", "POST"])
 def index():
    return render_template("index.html")
 
@@ -35,14 +35,25 @@ def about():
    return render_template("about.html")
 
 
-@app.route("/blind")
+@app.route("/blind" , methods=["GET", "POST"])
 def blind():
-   return render_template("blind.html")
+   if request.method == "POST":
+      ...
+
+   else:
+      return render_template("blind.html")
+
+   
 
 
-@app.route("/book")
+@app.route("/book" , methods=["GET", "POST"])
 def book():
    return render_template("book.html")
+
+
+@app.route("/team" , methods=["GET", "POST"])
+def team():
+   return render_template("team.html")
 
 
 @app.route("/initiative")
@@ -50,8 +61,6 @@ def initiative():
    return render_template("initiative.html")
 
 
-@app.route("/team")
-def team():
-   return render_template("team.html")
+
 
 
