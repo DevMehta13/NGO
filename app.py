@@ -3,6 +3,7 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
+import os
 app = Flask(__name__)
 
 # Configure session to use filesystem (instead of signed cookies)
@@ -49,24 +50,69 @@ def blind():
       education = request.form.get("education")
       languages = request.form.getlist("languages")
 
+
+
       photo = request.files.get("photo")
       id_proof = request.files.get("id_proof")
+
+      # Save the file locally
+      file_path = os.path.join('uploads', photo.filename)
+      photo.save(file_path)
+
+        # Generate the URL
+      photo_url = f"/uploads/{photo.filename}"
+
+      file_path = os.path.join('uploads', id_proof.filename)
+      id_proof.save(file_path)
+
+        # Generate the URL
+      id_proof_url = f"/uploads/{id_proof.filename}"
+
+
 
       #TODO: Make the apology function and return the apology template
       if not gender:
          return "gender is required"
-      # else:
-      #    return f"{gender}"
+      
 
       if not languages:
          return "Error: At least one language must be selected", 400
-      else:
-         return jsonify(languages)
-         # return f"Languages selected: {', '.join(languages)}"
-      # Example for how to add languages in languages column
-      # Insert the selected languages into the database
-      # cursor.execute("INSERT INTO user_languages (languages) VALUES (?)", (','.join(languages),))
       
+      
+      try:
+         languages_str = ','.join(languages)  # Convert list to comma-separated string
+
+         db.session.execute(
+            text(
+                  """
+                  INSERT INTO blind
+                  (first_name, last_name, gender, email, mobile_number, address, occupation, occupation_address, education, languages, photo_url, id_proof_url)
+                  VALUES 
+                  (:first_name, :last_name, :gender, :email, :mobile_number, :address, :occupation, :occupation_address, :education, :languages, :photo_url, :id_proof_url)
+                  """
+            ), 
+            {
+                  "first_name": first_name, 
+                  "last_name": last_name, 
+                  "gender": gender, 
+                  "email": email, 
+                  "mobile_number": mobile_number, 
+                  "address": address, 
+                  "occupation": occupation, 
+                  "occupation_address": occupation_address, 
+                  "education": education, 
+                  "languages": languages_str,  # Use the converted string
+                  "photo_url": photo_url, 
+                  "id_proof_url": id_proof_url
+            }
+         )
+         db.session.commit()
+
+      except Exception as e:
+         db.session.rollback()
+         return f"An error occurred: {str(e)}"
+   
+   
 
    else:
       return render_template("blind.html")
