@@ -151,109 +151,112 @@ def blind():
    
 
 
-@app.route("/book" , methods=["GET", "POST"])
+@app.route("/book", methods=["GET", "POST"])
 def book():
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        gender = request.form.get("inlineRadioOptions")
+        email = request.form.get("email")
+        mobile_number = request.form.get("mobile_number")
+        address = request.form.get("address")
+        occupation = request.form.get("occupation")
+        occupation_address = request.form.get("occupation_address")
+        education = request.form.get("education")
+        languages = request.form.getlist("languages")
+        audio = request.files.get("audio")
 
-   if request.method == "POST":
-      first_name = request.form.get("first_name")
-      last_name = request.form.get("last_name")
-      gender = request.form.get("inlineRadioOptions")
-      email = request.form.get("email")
-      mobile_number = request.form.get("mobile_number")
-      address = request.form.get("address")
-      occupation = request.form.get("occupation")
-      occupation_address = request.form.get("occupation_address")
-      education = request.form.get("education")
-      languages = request.form.getlist("languages")
-      audio = request.files.get("audio")
+        if not first_name:
+            flash("Must provide first name", "danger")
+            return redirect(url_for("book"))
 
+        if not last_name:
+            flash("Must provide last name", "danger")
+            return redirect(url_for("book"))
 
-      if not first_name:
-         return "must provide you first_name"
-      
-      if not last_name:
-         return "must provide last_name"
-      
-      if not gender:
-         return "must provide your gender"
-      
-      if not email:
-         return "must provide email"
+        if not gender:
+            flash("Must provide gender", "danger")
+            return redirect(url_for("book"))
 
-      if not mobile_number:
-         return "must provide mobile_number"
-      
-      if not address:
-         return "must provide address"
+        if not email:
+            flash("Must provide email", "danger")
+            return redirect(url_for("book"))
 
-      if not education:
-         return "must provide education"
-      
-      if not languages:
-         return "must provide languages"
-      
-      if not audio_url:
-         return "must provide your audio_url"
+        if not mobile_number:
+            flash("Must provide mobile number", "danger")
+            return redirect(url_for("book"))
 
+        if not address:
+            flash("Must provide address", "danger")
+            return redirect(url_for("book"))
 
-      file_path = os.path.join('uploads', audio.filename)
-      audio.save(file_path)
+        if not education:
+            flash("Must provide education", "danger")
+            return redirect(url_for("book"))
 
-      # Generate the URL
-      audio_url = f"/uploads/{audio.filename}"
+        if not languages:
+            flash("Must provide languages", "danger")
+            return redirect(url_for("book"))
 
+        if not audio:
+            flash("Must provide your audio file", "danger")
+            return redirect(url_for("book"))
 
+        # Check if the file is an audio file
+        allowed_audio_types = {'audio/mpeg', 'audio/wav', 'audio/ogg'}
+        if audio.mimetype not in allowed_audio_types:
+            flash("Invalid audio file type", "danger")
+            return redirect(url_for("book"))
 
-      #TODO: Make the apology function and return the apology template
-      if not gender:
-         return "gender is required"
-      # else:
-      #    return f"{gender}"
+        # Ensure upload directory exists
+        upload_directory = os.path.join(os.getcwd(), 'uploads')
+        if not os.path.exists(upload_directory):
+            os.makedirs(upload_directory)
 
-      if not languages:
-         return "Error: At least one language must be selected", 400
-      else:
-         return jsonify(languages)
-         # return f"Languages selected: {', '.join(languages)}"
-      # Example for how to add languages in languages column
-      # Insert the selected languages into the database
-      # cursor.execute("INSERT INTO user_languages (languages) VALUES (?)", (','.join(languages),))
-      
+        # Save the file
+        file_path = os.path.join(upload_directory, audio.filename)
+        audio.save(file_path)
 
-      try:
-         languages_str = ','.join(languages)  # Convert list to comma-separated string
+        # Generate the URL
+        audio_url = f"/uploads/{audio.filename}"
 
-         db.session.execute(
-            text(
-                  """
-                  INSERT INTO book
-                  (first_name, last_name, gender, email, mobile_number, address, occupation, occupation_address, education, languages, audio_url)
-                  VALUES 
-                  (:first_name, :last_name, :gender, :email, :mobile_number, :address, :occupation, :occupation_address, :education, :languages, :audio_url)
-                  """
-            ), 
-            {
-                  "first_name": first_name, 
-                  "last_name": last_name, 
-                  "gender": gender, 
-                  "email": email, 
-                  "mobile_number": mobile_number, 
-                  "address": address, 
-                  "occupation": occupation, 
-                  "occupation_address": occupation_address, 
-                  "education": education, 
-                  "languages": languages_str,  # Use the converted string
-                  "audio_url": audio_url
-            }
-         )
-         db.session.commit()
+        try:
+            languages_str = ','.join(languages)  # Convert list to comma-separated string
 
-      except Exception as e:
-         db.session.rollback()
-         return f"An error occurred: {str(e)}"
+            db.session.execute(
+                text(
+                    """
+                    INSERT INTO book
+                    (first_name, last_name, gender, email, mobile_number, address, occupation, occupation_address, education, languages, audio_url)
+                    VALUES 
+                    (:first_name, :last_name, :gender, :email, :mobile_number, :address, :occupation, :occupation_address, :education, :languages, :audio_url)
+                    """
+                ),
+                {
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "gender": gender,
+                    "email": email,
+                    "mobile_number": mobile_number,
+                    "address": address,
+                    "occupation": occupation,
+                    "occupation_address": occupation_address,
+                    "education": education,
+                    "languages": languages_str,  # Use the converted string
+                    "audio_url": audio_url
+                }
+            )
+            db.session.commit()
+            flash("Form submitted successfully!", "success")
+            return redirect(url_for("book"))
 
-   else:
-      return render_template("book.html")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}", "danger")
+            return redirect(url_for("book"))
+
+    else:
+        return render_template("book.html")
 
 
 @app.route("/team" , methods=["GET", "POST"])
@@ -273,8 +276,8 @@ def team():
       make_change = request.form.get("make_change")
       aadhar_number = request.form.get("aadhar_number")
       pan_number = request.form.get("pan_number")
-      aadhar_card = request.form.get("aadhar_card")
-      pan_card = request.form.get("pan_card")
+      aadhar_card = request.files.get("aadhar_card")
+      pan_card = request.files.get("pan_card")
       photo = request.files.get("photo") 
 
 
@@ -379,8 +382,8 @@ def team():
                   "make_change": make_change,  
                   "aadhar_number": aadhar_number,  
                   "pan_number": pan_number,  
-                  "aadhar_card": aadhar_card,  
-                  "pan_card": pan_card, 
+                  "aadhar_card": aadhar_card_url,  
+                  "pan_card": pan_card_url, 
                   "photo_url": photo_url  
 
             }
