@@ -1,9 +1,13 @@
+import os
+
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-import os
+
+from helpers import apology
+
 app = Flask(__name__)
 
 # Configure session to use filesystem (instead of signed cookies)
