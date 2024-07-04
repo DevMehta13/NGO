@@ -38,7 +38,34 @@ def about():
 @app.route("/blind" , methods=["GET", "POST"])
 def blind():
    if request.method == "POST":
-      ...
+      first_name = request.form.get("first_name")
+      last_name = request.form.get("last_name")
+      gender = request.form.get("inlineRadioOptions")
+      email = request.form.get("email")
+      mobile_number = request.form.get("mobile_number")
+      adress = request.form.get("address")
+      occupation = request.form.get("occupation")
+      occupation_adress = request.form.get("occupation_adress")
+      languages = request.form.getlist("languages")
+
+      photo = request.files.get("photo")
+      id_proof = request.files.get("id_proof")
+
+      #TODO: Make the apology function and return the apology template
+      if not gender:
+         return "gender is required"
+      # else:
+      #    return f"{gender}"
+
+      if not languages:
+         return "Error: At least one language must be selected", 400
+      else:
+         return jsonify(languages)
+         # return f"Languages selected: {', '.join(languages)}"
+      # Example for how to add languages in languages column
+      # Insert the selected languages into the database
+      # cursor.execute("INSERT INTO user_languages (languages) VALUES (?)", (','.join(languages),))
+      
 
    else:
       return render_template("blind.html")
