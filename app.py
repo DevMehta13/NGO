@@ -3,6 +3,9 @@ import os
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from werkzeug.utils import secure_filename
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
@@ -19,6 +22,11 @@ Session(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ekprayas.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+# Define the upload folder path within the static folder
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 
 @app.route("/" , methods=["GET", "POST"])
@@ -86,18 +94,35 @@ def blind():
       if not id_proof:
          return "must provide your identity proof"
 
-      # Save the file locally
-      file_path = os.path.join('uploads', photo.filename)
-      photo.save(file_path)
+      if len(mobile_number) != 10:
+         return apology("Mobile number must be of 10 digits", 403)
+      
+      # Secure the filename
+      photo_filename_secure = secure_filename(photo.filename)
 
-      # Generate the URL
-      photo_url = f"/uploads/{photo.filename}"
+      # Save the file to the upload folder
+      photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo_filename_secure))
 
-      file_path = os.path.join('uploads', id_proof.filename)
-      id_proof.save(file_path)
+      # Construct the full URL for the uploaded file
+      photo_url = url_for('static', filename=f'uploads/{photo_filename_secure}', _external=True)
 
-      # Generate the URL
-      id_proof_url = f"/uploads/{id_proof.filename}"
+      id_proof_filename_secure = secure_filename(id_proof.filename)
+
+      id_proof.save(os.path.join(app.config['UPLOAD_FOLDER'], id_proof_filename_secure))
+
+      id_proof_url = url_for('static', filename=f'uploads/{id_proof_filename_secure}', _external=True)
+
+      # TODO: Test this code after hosting this online to ensure that the files are stored
+      # and also accessible by backend and ngo admin too 
+      # TODO: MAKE A FUNCTION TO STORE THESE FILES 
+      # TODO: Make a temporary funtion to store all files to test in local machine (as images may not be available through localhost link)
+      # TODO: Make a function to store all the files when the site is hosted 
+      
+      # file_path = os.path.join('uploads', id_proof.filename)
+      # id_proof.save(file_path)
+
+      # # Generate the URL
+      # id_proof_url = f"/uploads/{id_proof.filename}"
 
 
 
@@ -143,6 +168,8 @@ def blind():
 
       except Exception as e:
          db.session.rollback()
+         # return apology("An Error Occured", 500)
+         # Displaying detailed errors is not safe so remove the below line when ready to deploy
          return f"An error occurred: {str(e)}"
    
       flash("Thank You for Submitting Form We Will Get Back to you Soon.")
@@ -157,110 +184,128 @@ def blind():
 
 @app.route("/book", methods=["GET", "POST"])
 def book():
-    if request.method == "POST":
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
-        gender = request.form.get("inlineRadioOptions")
-        email = request.form.get("email")
-        mobile_number = request.form.get("mobile_number")
-        address = request.form.get("address")
-        occupation = request.form.get("occupation")
-        occupation_address = request.form.get("occupation_address")
-        education = request.form.get("education")
-        languages = request.form.getlist("languages")
-        audio = request.files.get("audio")
+   if request.method == "POST":
+      first_name = request.form.get("first_name")
+      last_name = request.form.get("last_name")
+      gender = request.form.get("inlineRadioOptions")
+      email = request.form.get("email")
+      mobile_number = request.form.get("mobile_number")
+      address = request.form.get("address")
+      occupation = request.form.get("occupation")
+      occupation_address = request.form.get("occupation_address")
+      education = request.form.get("education")
+      languages = request.form.getlist("languages")
+      audio = request.files.get("audio")
 
-        if not first_name:
-            flash("Must provide first name", "danger")
-            return redirect(url_for("book"))
+      if not first_name:
+         flash("Must provide first name", "danger")
+         return redirect(url_for("book"))
 
-        if not last_name:
-            flash("Must provide last name", "danger")
-            return redirect(url_for("book"))
+      if not last_name:
+         flash("Must provide last name", "danger")
+         return redirect(url_for("book"))
 
-        if not gender:
-            flash("Must provide gender", "danger")
-            return redirect(url_for("book"))
+      if not gender:
+         flash("Must provide gender", "danger")
+         return redirect(url_for("book"))
 
-        if not email:
-            flash("Must provide email", "danger")
-            return redirect(url_for("book"))
+      if not email:
+         flash("Must provide email", "danger")
+         return redirect(url_for("book"))
 
-        if not mobile_number:
-            flash("Must provide mobile number", "danger")
-            return redirect(url_for("book"))
+      if not mobile_number:
+         flash("Must provide mobile number", "danger")
+         return redirect(url_for("book"))
 
-        if not address:
-            flash("Must provide address", "danger")
-            return redirect(url_for("book"))
+      if not address:
+         flash("Must provide address", "danger")
+         return redirect(url_for("book"))
 
-        if not education:
-            flash("Must provide education", "danger")
-            return redirect(url_for("book"))
+      if not education:
+         flash("Must provide education", "danger")
+         return redirect(url_for("book"))
 
-        if not languages:
-            flash("Must provide languages", "danger")
-            return redirect(url_for("book"))
+      if not languages:
+         flash("Must provide languages", "danger")
+         return redirect(url_for("book"))
 
-        if not audio:
-            flash("Must provide your audio file", "danger")
-            return redirect(url_for("book"))
+      if not audio:
+         flash("Must provide your audio file", "danger")
+         return redirect(url_for("book"))
+      
+      if len(mobile_number) != 10:
+         return apology("Mobile number must be of 10 digits", 403)
 
-        # Check if the file is an audio file
-        allowed_audio_types = {'audio/mpeg', 'audio/wav', 'audio/ogg'}
-        if audio.mimetype not in allowed_audio_types:
-            flash("Invalid audio file type", "danger")
-            return redirect(url_for("book"))
+      # Check if the file is an audio file
+      allowed_audio_types = {
+         'audio/mpeg',  # MP3
+         'audio/wav',   # WAV
+         'audio/ogg',   # OGG
+         'audio/x-wav', # Another variant of WAV
+         'audio/webm',  # WebM audio
+         'audio/flac'   # FLAC audio
+      }
 
-        # Ensure upload directory exists
-        upload_directory = os.path.join(os.getcwd(), 'uploads')
-        if not os.path.exists(upload_directory):
-            os.makedirs(upload_directory)
+      if audio.mimetype not in allowed_audio_types:
+         flash("Invalid audio file type", "danger")
+         return redirect(url_for("book"))
 
-        # Save the file
-        file_path = os.path.join(upload_directory, audio.filename)
-        audio.save(file_path)
+      # Ensure upload directory exists
+      upload_directory = os.path.join(os.getcwd(), 'uploads')
+      if not os.path.exists(upload_directory):
+         os.makedirs(upload_directory)
 
-        # Generate the URL
-        audio_url = f"/uploads/{audio.filename}"
+      # Save the file
+      file_path = os.path.join(upload_directory, audio.filename)
+      audio.save(file_path)
 
-        try:
-            languages_str = ','.join(languages)  # Convert list to comma-separated string
+      # Generate the URL
+      audio_url = f"/uploads/{audio.filename}"
 
-            db.session.execute(
-                text(
-                    """
-                    INSERT INTO book
-                    (first_name, last_name, gender, email, mobile_number, address, occupation, occupation_address, education, languages, audio_url)
-                    VALUES 
-                    (:first_name, :last_name, :gender, :email, :mobile_number, :address, :occupation, :occupation_address, :education, :languages, :audio_url)
-                    """
-                ),
-                {
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "gender": gender,
-                    "email": email,
-                    "mobile_number": mobile_number,
-                    "address": address,
-                    "occupation": occupation,
-                    "occupation_address": occupation_address,
-                    "education": education,
-                    "languages": languages_str,  # Use the converted string
-                    "audio_url": audio_url
-                }
+      try:
+         languages_str = ','.join(languages)  # Convert list to comma-separated string
+
+         db.session.execute(
+               text(
+                  """
+                  INSERT INTO book
+                  (first_name, last_name, gender, email, mobile_number, address, occupation, occupation_address, education, languages, audio_url)
+                  VALUES 
+                  (:first_name, :last_name, :gender, :email, :mobile_number, :address, :occupation, :occupation_address, :education, :languages, :audio_url)
+                  """
+               ),
+               {
+                  "first_name": first_name,
+                  "last_name": last_name,
+                  "gender": gender,
+                  "email": email,
+                  "mobile_number": mobile_number,
+                  "address": address,
+                  "occupation": occupation,
+                  "occupation_address": occupation_address,
+                  "education": education,
+                  "languages": languages_str,  # Use the converted string
+                  "audio_url": audio_url
+               }
             )
-            db.session.commit()
-            flash("Form submitted successfully!", "success")
-            return redirect(url_for("book"))
+         db.session.commit()
+         # flash("Form submitted successfully!", "success")
+         # return redirect(url_for("book"))
 
-        except Exception as e:
-            db.session.rollback()
-            flash(f"An error occurred: {str(e)}", "danger")
-            return redirect(url_for("book"))
+      except Exception as e:
+         db.session.rollback()
+         # return apology("An Error Occured", 500)
+         # Displaying detailed errors is not safe so remove the below line when ready to deploy
+         flash(f"An error occurred: {str(e)}", "danger")
+         # Do not redirect to book page so that the user does not have to fill the form again
+         return redirect(url_for("book"))
+         
+      flash("Thank You for Submitting Form We Will Get Back to you Soon.")
 
-    else:
-        return render_template("book.html")
+      return redirect(url_for("book"))
+
+   else:
+      return render_template("book.html")
 
 
 @app.route("/team" , methods=["GET", "POST"])
@@ -333,7 +378,8 @@ def team():
       if not photo:
          return "must provide your photo"
       
-
+      if len(mobile_number) != 10:
+         return apology("Mobile number must be of 10 digits", 403)
 
       file_path = os.path.join('uploads', aadhar_card.filename)
       aadhar_card.save(file_path)
@@ -396,7 +442,13 @@ def team():
 
       except Exception as e:
          db.session.rollback()
+         # return apology("An Error Occured", 500)
+         # Displaying detailed errors is not safe so remove the below line when ready to deploy
          return f"An error occurred: {str(e)}"
+
+      flash("Thank You for Submitting Form We Will Get Back to you Soon.")
+
+      return redirect(url_for("book"))
 
    else:
       return render_template("team.html")
@@ -409,6 +461,63 @@ def initiative():
    return render_template("initiative.html")
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+   return apology("Page Not Found", 404)
+
+
+@app.errorhandler(500)
+def server_error(e):
+   return apology("Internal Server Error", 500)
 
 
 
+@app.route("/testing")
+def testing():
+   rows = db.session.execute(
+      text(
+         "SELECT photo_url FROM blind WHERE id = 8"
+      ),
+   ).fetchall()
+   image = rows[0][0]
+   return f"{image}"
+
+
+# Change code like below when ready to deploy 
+
+# import logging
+# from logging.handlers import RotatingFileHandler
+
+# Set up logging
+# handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
+# handler.setLevel(logging.ERROR)
+# formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+# handler.setFormatter(formatter)
+# app.logger.addHandler(handler)
+
+# from flask import Flask, render_template, flash, redirect, url_for
+
+# app = Flask(__name__)
+
+# @app.route('/some_route')
+# def some_route():
+#     try:
+#         # Your route logic here
+#         pass
+#     except Exception as e:
+#         app.logger.error(f"An error occurred: {str(e)}")
+#         flash("An unexpected error occurred. Please try again later.", "danger")
+#         return redirect(url_for('error'))
+
+# @app.errorhandler(500)
+# def internal_error(error):
+#     app.logger.error(f"Server Error: {str(error)}")
+#     return render_template('500.html'), 500
+
+# @app.errorhandler(Exception)
+# def unhandled_exception(e):
+#     app.logger.error(f"Unhandled Exception: {str(e)}")
+#     return render_template('500.html'), 500
+
+# if __name__ == "__main__":
+#     app.run(debug=False)
