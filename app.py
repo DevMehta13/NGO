@@ -65,34 +65,34 @@ def blind():
       id_proof = request.files.get("id_proof")
 
       if not first_name:
-         return "must provide you first_name"
+         return apology("must provide you first_name", 403)
       
       if not last_name:
-         return "must provide last_name"
+         return apology("must provide last_name", 403)
       
       if not gender:
-         return "must provide your gender"
+         return apology("must provide your gender", 403)
       
       if not email:
-         return "must provide email"
+         return apology("must provide email", 403)
 
       if not mobile_number:
-         return "must provide mobile_number"
+         return apology("must provide mobile_number", 403)
       
       if not address:
-         return "must provide address"
+         return apology("must provide address", 403)
 
       if not education:
-         return "must provide education"
+         return apology("must provide education", 403)
       
       if not languages:
-         return "must provide languages"
+         return apology("must provide languages", 403)
       
       if not photo:
-         return "must provide your photo"
+         return apology("must provide your photo", 403)
       
       if not id_proof:
-         return "must provide your identity proof"
+         return apology("must provide your identity proof", 403)
 
       if len(mobile_number) != 10:
          return apology("Mobile number must be of 10 digits", 403)
