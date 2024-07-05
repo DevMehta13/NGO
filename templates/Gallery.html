@@ -146,5 +146,24 @@
       </nav>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+
+  <!--Form-->
+  <h1>Admin Panel</h1>
+  <form action="/book" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+  <div class="row g-3">
+    <div class="col-sm-6">
+      <label for="firstName" class="form-label">Event Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+      <input type="text" name="event_name" class="form-control" id="firstName" placeholder="" value="" required>
+      <div class="invalid-feedback">
+        Valid Event name is required.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="formFileMultiple" class="form-label">Upload Images(You can add upto 50 images)</label>
+      <input class="form-control" accept="image/*" type="file" id="formFileMultiple" multiple>
+    </div>
+    
+        </form>
+  <!--Form End-->
   {% endblock %}
 
