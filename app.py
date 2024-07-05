@@ -52,7 +52,23 @@ def index():
 def gallery():
     
    if request.method == "POST":
+      event_name = request.form.get("event_name")
+      thumbnail = request.files.get("thumbnail")
       files = request.files.getlist('files')
+
+
+      if not event_name:
+         flash("Must provide event name", "danger")
+         return redirect(url_for("gallery"))
+      
+      if not thumbnail:
+         flash("Must provide thumbnail", "danger")
+         return redirect(url_for("book"))
+      
+      if not files:
+         flash("Must provide files", "danger")
+         return redirect(url_for("book"))
+
       if not files:
          return apology('No files uploaded', 400)
 
@@ -61,19 +77,55 @@ def gallery():
          file_url = upload_get_tmp(file)
          file_urls.append(file_url)
 
-         
+
+      
 
 
 
+      thumbnail_url = upload_get_tmp(thumbnail)
 
 
+      data = {
+        "event_name": event_name,
+        "thumbnail_url": thumbnail_url,
+        "img1_url": file_urls[0] if len(file_urls) > 0 else None,
+        "img2_url": file_urls[1] if len(file_urls) > 1 else None,
+        "img3_url": file_urls[2] if len(file_urls) > 2 else None,
+        # Add more as needed up to img50_url
+      }
+
+      # Prepare your SQL query
+      column_names = ', '.join(data.keys())
+      placeholders = ', '.join([f':{key}' for key in data.keys()])
+
+      query = text(f"""
+         INSERT INTO photo_gallery ({column_names})
+         VALUES ({placeholders})
+      """)
+
+      try:
+         db.session.execute(query, data)
+         db.session.commit()
+      except Exception as e:
+         db.session.rollback()
+         return f"an error occured {str(e)}"
+
+
+      flash("Thank You for Submitting Form We Will Get Back to you Soon.")
+
+      return redirect("/gallery")
+
+   
 
 
 
 
    else:
-      rows = db.session.execute(text("SELECT * FROM gallery")).fetchall()
-      modified_rows = [dict(row._mapping) for row in rows]
+      rows = db.session.execute(text("SELECT * FROM photo_gallery ORDER BY id DESC")).fetchall()
+      modified_rows = [list(row) for row in rows]
+      # return jsonify(modified_rows)
+      return render_template("gallery.html" , rows = modified_rows)
+   
 
 
 @app.route("/about")

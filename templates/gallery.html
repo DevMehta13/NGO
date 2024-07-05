@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Photo Gallery
+{% endblock %}
+{% block main %}
+  <style>
+
+    .card-img-top {
+      width: 100%;
+      height: 200px; /* Adjust this value to the desired height */
+      object-fit: cover;
+    }
+    .carousel-img {
+      width: 100%;
+      height: 400px; /* Adjust this value to the desired height */
+      object-fit: cover;
+    }
+    /* Styles for card hover effect */
+.cardGallery {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: auto;
+}
+
+.cardGallery:hover {
+  transform: scale(1.05); /* Adjust the scale factor for zoom effect */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Adjust shadow properties for the glow effect */
+}
+.containerGallery {
+           
+           font-family: Arial, Helvetica, sans-serif;
+           animation: colorChange 20s infinite;
+           transition: background-color 2s;
+           padding: 20px;
+           border-radius: 8px;
+           text-align: center;
+       }
+
+       @keyframes colorChange {
+           0% {
+               background-color: aliceblue;
+           }
+           20% {
+               background-color: #b0e0e6; /* PowderBlue */
+           }
+           40% {
+               background-color: #add8e6; /* LightBlue */
+           }
+           60% {
+               background-color: #87ceeb; /* SkyBlue */
+           }
+           80% {
+               background-color: #87cefa; /* LightSkyBlue */
+           }
+           100% {
+               background-color: aliceblue;
+           }
+       }
+.col-md-4{
+    padding: 20px;
+}
+.gallery-title {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-decoration: underline green;
+    }
+
+    .gallery-description {
+      text-align: center;
+   
+      font-weight: bold;
+    }
+
+
+
+  </style>
+  
+</head>
+<body>
+
+  <div class="container containerGallery mt-5">
+    <div class="gallery-title">
+        <h1>NGO Event Gallery</h1>
+      </div>
+      <div class="gallery-description">
+        <p>Explore our past events through these photo galleries.</p>
+      </div>
+
+      
+
+
+
+      <div class="row">
+        {% for row in rows %}
+        <!-- Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card cardGallery" data-toggle="modal" data-target="#event{{ row[0] }}Modal">
+                <img src="{{ row[2] }}" class="card-img-top" alt="{{ row[1] }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ row[1] }}</h5>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="event{{ row[0] }}Modal" tabindex="-1" role="dialog" aria-labelledby="event{{ row[0] }}ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="event{{ row[0] }}ModalLabel">{{ row[1] }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="event{{ row[0] }}Carousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for i in range(3, row|length) %}
+                                {% if row[i] %}
+                                <div class="carousel-item {% if i == 3 %}active{% endif %}">
+                                    <img src="{{ row[i] }}" class="d-block w-100 carousel-img" alt="{{ row[1] }} Image {{ i-2 }}">
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <a class="carousel-control-prev" href="#event{{ row[0] }}Carousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#event{{ row[0] }}Carousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+       
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        
+
+  <!--Form-->
+  <h1>Admin Panel</h1>
+  <form action="/gallery" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+  <div class="row g-3">
+    <div class="col-sm-6">
+      <label for="firstName" class="form-label">Event Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+      <input type="text" name="event_name" class="form-control" id="firstName" placeholder="" value="" required>
+      <div class="invalid-feedback">
+        Valid Event name is required.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="formFile" class="form-label">Default file input example</label>
+      <input class="form-control" name="thumbnail" type="file" id="formFile">
+    </div>
+    <div class="mb-3">
+      <label for="formFileMultiple" class="form-label">Upload Images(You can add upto 50 images)</label>
+      <input class="form-control" name="files" accept="image/*" type="file" id="formFileMultiple" multiple>
+    </div>
+    <button class="w-100 btn  btn-lg" type="submit"
+              style="color: white; background-color: #2f6e9c;">Submit</button>
+    
+    
+        </form>
+  <!--Form End-->
+  {% endblock %}
+
