@@ -128,13 +128,13 @@ def blind():
 
 
 
-      #TODO: Make the apology function and return the apology template
-      if not gender:
-         return "gender is required"
+      # #TODO: Make the apology function and return the apology template
+      # if not gender:
+      #    return "gender is required"
       
 
-      if not languages:
-         return "Error: At least one language must be selected", 400
+      # if not languages:
+      #    return "Error: At least one language must be selected", 400
       
       
       try:
@@ -286,7 +286,7 @@ def book():
                   "education": education,
                   "languages": languages_str,  # Use the converted string
                   "audio_url": audio_url
-               }
+               }    
             )
          db.session.commit()
          # flash("Form submitted successfully!", "success")
@@ -308,9 +308,8 @@ def book():
       return render_template("book.html")
 
 
-@app.route("/team" , methods=["GET", "POST"])
+@app.route("/team", methods=["GET", "POST"])
 def team():
-
    if request.method == "POST":
       first_name = request.form.get("first_name")
       last_name = request.form.get("last_name")
