@@ -1,240 +1,166 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Login
+    Login
 {% endblock %}
 
 {% block main %}
-<div class="container">
-  <main>
-    <div class="py-5 text-center">
-      <h2>Registration for Joining as a Team Member</h2>
-      <p class="lead">Joining an NGO allows you to make a positive impact on society by addressing important social issues. It also provides personal growth opportunities and a sense of fulfillment through meaningful work.</p>
-    </div>
+  <div class="container">
+    <main>
+      <div class="py-5 text-center">
 
-    <div class="row g-5">
-    </div>
-    <div class="col-md-7 col-lg-8">
-      <h4 class="mb-3">Add Your Details</h4>
-      <form action="/team" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <label for="firstName" class="form-label">First name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" name="first_name" class="form-control" id="firstName" placeholder="" value="" required>
-            <div class="invalid-feedback">
-              Valid first name is required.
+        <h2>Registration for Joining as a Team Member </h2>
+        <p class="lead">Joining an NGO allows you to make a positive impact on society by addressing important social
+          issues. It also provides personal growth opportunities and a sense of fulfillment through meaningful work.</p>
+      </div>
+
+      <div class="row g-5">
+
+
+
+
+      </div>
+      <div class="col-md-7 col-lg-8">
+        <h4 class="mb-3">Add Your Details </h4>
+        <form class="needs-validation" novalidate="" action="/team" method="post" enctype="multipart/form-data">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">First name <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="text" class="form-control" name="first_name id=" firstName" placeholder="" value=""
+                required="">
+              <div class="invalid-feedback">
+                Valid first name is required.
+              </div>
             </div>
-          </div>
 
-          <div class="col-sm-6">
-            <label for="lastName" class="form-label">Last name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" name="last_name" class="form-control" id="lastName" placeholder="" value="" required>
-            <div class="invalid-feedback">
-              Valid last name is required.
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">Last name <span class="text-body-secondary"><em><small>(required)
+                    </small></em></span></label>
+              <input type="text" class="form-control" name="last_name id=" lastName" placeholder="" value=""
+                required="">
+              <div class="invalid-feedback">
+                Valid last name is required.
+              </div>
             </div>
-          </div>
 
-          <div class="gen">
-            <label for="gender" class="form-label">Gender <span class="text-body-secondary"><em><small>(required)</small></em></span></label><br>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="male" required>
-              <label class="form-check-label" for="inlineRadio1">Male</label>
+            <div class="gen">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" data-backend-name="female" name="inlineRadioOptions"
+                  id="inlineRadio2" value="option2">
+                <label class="form-check-label" for="inlineRadio2">Female <span
+                    class="text-body-secondary"><em><small>(only female candidates are accepted)
+                      </small></em></span></label>
+              </div>
             </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="female" required>
-              <label class="form-check-label" for="inlineRadio2">Female</label>
+
+            <div class="col-12">
+              <label for="email" class="form-label">Email <span class="text-body-secondary"><em><small>(required)
+                    </small></em></span></label>
+              <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com">
+              <div class="invalid-feedback">
+                Please enter a valid email address for shipping updates.
+              </div>
             </div>
-            <div class="invalid-feedback">
-              Please select your gender.
+
+            <div class="col-12">
+              <label for="address" class="form-label">Mobile Number <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="number" class="form-control" name="mobile_number" id="address" placeholder="(10 digits)"
+                required>
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="email" class="form-label">Email <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com" required>
-            <div class="invalid-feedback">
-              Please enter a valid email address.
+            <div class="col-12">
+              <label for="address2" class="form-label">Address <span class="text-body-secondary"><em><small>(required)
+                    </small></em></span></label>
+              <input type="text" class="form-control" name="address" id="address2" placeholder="Apartment or suite">
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="mobile_number" class="form-label">Mobile Number <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="mobile_number" id="mobile_number" placeholder="(10 digits)" required>
-            <div class="invalid-feedback">
-              Valid mobile number is required.
+            <div class="col-12">
+              <label for="firstName" class="form-label">Education & Qualification <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="text" class="form-control" name="education" id="firstName" placeholder="" value=""
+                required="">
+              <div class="invalid-feedback">
+                Valid Education & Qualification is required.
+              </div>
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="address" class="form-label">Address <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="address" id="address" placeholder="Apartment or suite" required>
-            <div class="invalid-feedback">
-              Valid address is required.
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">Occupation <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="text" class="form-control" name="occupation" id="firstName" placeholder="" value=""
+                required="">
+              <div class="invalid-feedback">
+                Valid Occupation is required.
+              </div>
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="education" class="form-label">Education & Qualification <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="education" id="education" placeholder="" required>
-            <div class="invalid-feedback">
-              Valid education & qualification is required.
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">Occupation Address <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="text" class="form-control" name="occupation_adrdress" id="lastName" placeholder="" value=""
+                required="">
+              <div class="invalid-feedback">
+                Valid Occupation Address is required.
+              </div>
             </div>
-          </div>
 
-          <div class="col-sm-6">
-            <label for="occupation" class="form-label">Occupation <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="occupation" id="occupation" placeholder="" required>
-            <div class="invalid-feedback">
-              Valid occupation is required.
+            <div class="col-12">
+              <label for="firstName" class="form-label">About Yourself <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="text" class="form-control" name="about" id="firstName" placeholder="" value="" required="">
+              <div class="invalid-feedback">
+                Valid Text is required.
+              </div>
             </div>
-          </div>
 
-          <div class="col-sm-6">
-            <label for="occupation_address" class="form-label">Occupation Address <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="occupation_address" id="occupation_address" placeholder="" required>
-            <div class="invalid-feedback">
-              Valid occupation address is required.
+            <div class="col-12">
+              <label for="firstName" class="form-label">How Would You Make Change <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="text" class="form-control" name="make_change" id="firstName" placeholder="" value=""
+                required="">
+              <div class="invalid-feedback">
+                Valid Text is required.
+              </div>
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="about" class="form-label">About Yourself <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="about" id="about" placeholder="" required>
-            <div class="invalid-feedback">
-              Valid text is required.
+            <div class="col-12">
+              <label for="address" class="form-label">Aadhar number <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input type="number" class="form-control" name="aadhar_number" id="address" placeholder="(12 digits)"
+                required>
             </div>
-          </div>
-
-          <div class="col-12">
-            <label for="make_change" class="form-label">How Would You Make Change <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="make_change" id="make_change" placeholder="" required>
-            <div class="invalid-feedback">
-              Valid text is required.
+            <div class="col-12">
+              <label for="address" class="form-label">Pan number <span class="text-body-secondary"><em><small>(required)
+                    </small></em></span></label>
+              <input type="text" class="form-control" name="pan_number" id="address" placeholder="(10 characters)"
+                required>
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="aadhar_number" class="form-label">Aadhar Number <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="aadhar_number" id="aadhar_number" placeholder="(12 digits)" required>
-            <div class="invalid-feedback">
-              Valid Aadhar number is required.
+            <div class="mb-3">
+              <label for="formFile" class="form-label"> Aadhar Card <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input class="form-control" type="file" name="aadhar_card" id="formFile">
             </div>
-          </div>
-
-          <div class="col-12">
-            <label for="pan_number" class="form-label">Pan Number <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input type="text" class="form-control" name="pan_number" id="pan_number" placeholder="(10 characters)" required>
-            <div class="invalid-feedback">
-              Valid PAN number is required.
+            <div class="mb-3">
+              <label for="formFile" class="form-label"> Pan Card <span class="text-body-secondary"><em><small>(required)
+                    </small></em></span></label>
+              <input class="form-control" type="file" name="pan_card" id="formFile">
             </div>
-          </div>
 
-          <div class="mb-3">
-            <label for="aadhar_card" class="form-label">Upload Your Aadhar Card <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input class="form-control" accept="image/*" name="aadhar_card" type="file" id="aadhar_card" required>
-            <div class="invalid-feedback">
-              Valid Aadhar card is required.
+
+
+
+            <div class="mb-3">
+              <label for="formFile" class="form-label">Upload your Photo <span
+                  class="text-body-secondary"><em><small>(required) </small></em></span></label>
+              <input class="form-control" type="file" name="photo" id="formFile">
             </div>
-          </div>
 
-          <div class="mb-3">
-            <label for="pan_card" class="form-label">Upload Your Pan Card <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input class="form-control" accept="image/*" name="pan_card" type="file" id="pan_card" required>
-            <div class="invalid-feedback">
-              Valid PAN card is required.
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label for="photo" class="form-label">Upload Your Photo <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-            <input class="form-control" accept="image/*" name="photo" type="file" id="photo" required>
-            <div class="invalid-feedback">
-              Valid photo is required.
-            </div>
-          </div>
-
-          <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Submit</button>
-        </div>
-      </form>
-      <script>
-        function validateForm() {
-          var firstName = document.getElementById('firstName').value.trim();
-          var lastName = document.getElementById('lastName').value.trim();
-          var gender = document.querySelector('input[name="inlineRadioOptions"]:checked');
-          var email = document.getElementById('email').value.trim();
-          var mobileNumber = document.getElementById('mobile_number').value.trim();
-          var address = document.getElementById('address').value.trim();
-          var education = document.getElementById('education').value.trim();
-          var occupation = document.getElementById('occupation').value.trim();
-          var occupationAddress = document.getElementById('occupation_address').value.trim();
-          var about = document.getElementById('about').value.trim();
-          var makeChange = document.getElementById('make_change').value.trim();
-          var aadharNumber = document.getElementById('aadhar_number').value.trim();
-          var panNumber = document.getElementById('pan_number').value.trim();
-          var aadharCard = document.getElementById('aadhar_card').value.trim();
-          var panCard = document.getElementById('pan_card').value.trim();
-          var photo = document.getElementById('photo').value.trim();
-
-          var missingFields = [];
-
-          if (firstName === '') {
-            missingFields.push('First Name');
-          }
-          if (lastName === '') {
-            missingFields.push('Last Name');
-          }
-          if (!gender) {
-            missingFields.push('Gender');
-          }
-          if (email === '') {
-            missingFields.push('Email');
-          }
-          if (mobileNumber === '') {
-            missingFields.push('Mobile Number');
-          }
-          if (address === '') {
-            missingFields.push('Address');
-          }
-          if (education === '') {
-            missingFields.push('Education');
-          }
-          if (occupation === '') {
-            missingFields.push('Occupation');
-          }
-          if (occupationAddress === '') {
-            missingFields.push('Occupation Address');
-          }
-          if (about === '') {
-            missingFields.push('About Yourself');
-          }
-          if (makeChange === '') {
-            missingFields.push('How Would You Make Change');
-          }
-          if (aadharNumber === '') {
-            missingFields.push('Aadhar Number');
-          }
-          if (panNumber === '') {
-            missingFields.push('Pan Number');
-          }
-          if (aadharCard === '') {
-            missingFields.push('Aadhar Card');
-          }
-          if (panCard === '') {
-            missingFields.push('Pan Card');
-          }
-          if (photo === '') {
-            missingFields.push('Photo');
-          }
-
-          if (missingFields.length > 0) {
-            // alert('Please fill out the following fields: ' + missingFields.join(', '));
-            return false; // Prevent form submission
-          }
-
-          return true; // Allow form submission
-        }
-      </script>
-    </div>
-  </main>
-</div>
-{% endblock %}
+            <button class="w-100 btn  btn-lg" type="submit"
+              style="color: white; background-color: #2f6e9c;">Submit</button>
+        </form>
+      </div>
+  </div>
+  {% endblock %}
