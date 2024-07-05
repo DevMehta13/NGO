@@ -1,3 +1,4 @@
+
 import os
 
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
@@ -19,13 +20,26 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Define the upload folder path within the static folder
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ekprayas.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Define the upload folder path within the static folder
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# Ensure the upload directory exists
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+
+
+
+
+def upload_get_tmp(file):
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    file_url = url_for('static', filename=f'uploads/{filename}')
+    return file_url
 
 
 
@@ -101,17 +115,18 @@ def blind():
       photo_filename_secure = secure_filename(photo.filename)
 
       # Save the file to the upload folder
-      photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo_filename_secure))
+    #   photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo_filename_secure))
 
-      # Construct the full URL for the uploaded file
-      photo_url = url_for('static', filename=f'uploads/{photo_filename_secure}', _external=True)
+    #   # Construct the full URL for the uploaded file
+    #   photo_url = url_for('static', filename=f'uploads/{photo_filename_secure}', _external=True)
 
-      id_proof_filename_secure = secure_filename(id_proof.filename)
+    #   id_proof_filename_secure = secure_filename(id_proof.filename)
 
-      id_proof.save(os.path.join(app.config['UPLOAD_FOLDER'], id_proof_filename_secure))
+    #   id_proof.save(os.path.join(app.config['UPLOAD_FOLDER'], id_proof_filename_secure))
 
-      id_proof_url = url_for('static', filename=f'uploads/{id_proof_filename_secure}', _external=True)
-
+    #   id_proof_url = url_for('static', filename=f'uploads/{id_proof_filename_secure}', _external=True)
+      photo_url = upload_get_tmp(photo)  
+      id_proof_url = upload_get_tmp(id_proof)
       # TODO: Test this code after hosting this online to ensure that the files are stored
       # and also accessible by backend and ngo admin too 
       # TODO: MAKE A FUNCTION TO STORE THESE FILES 
@@ -250,17 +265,12 @@ def book():
          flash("Invalid audio file type", "danger")
          return redirect(url_for("book"))
 
-      # Ensure upload directory exists
-      upload_directory = os.path.join(os.getcwd(), 'uploads')
-      if not os.path.exists(upload_directory):
-         os.makedirs(upload_directory)
+    #   # Ensure upload directory exists
+    #   upload_directory = os.path.join(os.getcwd(), 'uploads')
+    #   if not os.path.exists(upload_directory):
+    #      os.makedirs(upload_directory)
 
-      # Save the file
-      file_path = os.path.join(upload_directory, audio.filename)
-      audio.save(file_path)
-
-      # Generate the URL
-      audio_url = f"/uploads/{audio.filename}"
+      audio_url = upload_get_tmp(audio)  
 
       try:
          languages_str = ','.join(languages)  # Convert list to comma-separated string
@@ -380,23 +390,26 @@ def team():
       if len(mobile_number) != 10:
          return apology("Mobile number must be of 10 digits", 403)
 
-      file_path = os.path.join('uploads', aadhar_card.filename)
-      aadhar_card.save(file_path)
+    #   file_path = os.path.join('uploads', aadhar_card.filename)
+    #   aadhar_card.save(file_path)
 
-      # Generate the URL
-      aadhar_card_url = f"/uploads/{aadhar_card.filename}"
+    #   # Generate the URL
+    #   aadhar_card_url = f"/uploads/{aadhar_card.filename}"
 
-      file_path = os.path.join('uploads', pan_card.filename)
-      pan_card.save(file_path)
+    #   file_path = os.path.join('uploads', pan_card.filename)
+    #   pan_card.save(file_path)
 
-      # Generate the URL
-      pan_card_url = f"/uploads/{pan_card.filename}"
+    #   # Generate the URL
+    #   pan_card_url = f"/uploads/{pan_card.filename}"
 
-      file_path = os.path.join('uploads', photo.filename)
-      photo.save(file_path)
+    #   file_path = os.path.join('uploads', photo.filename)
+    #   photo.save(file_path)
 
-      # Generate the URL
-      photo_url = f"/uploads/{photo.filename}"
+    #   # Generate the URL
+    #   photo_url = f"/uploads/{photo.filename}"
+      aadhar_card_url = upload_get_tmp(aadhar_card)  
+      pan_card_url = upload_get_tmp(pan_card)
+      photo_url = upload_get_tmp(photo)
 
 
       #TODO: Make the apology function and return the apology template
@@ -480,6 +493,10 @@ def testing():
    ).fetchall()
    image = rows[0][0]
    return f"{image}"
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 # Change code like below when ready to deploy 
