@@ -50,11 +50,30 @@ def index():
 
 @app.route("/gallery", methods=["GET", "POST"])
 def gallery():
-    if request.method == "POST":
-       ...
-    else:
-       rows = db.session.execute(text("SELECT * FROM gallery")).fetchall()
-       modified_rows = [dict(row._mapping) for row in rows]
+    
+   if request.method == "POST":
+      files = request.files.getlist('files')
+      if not files:
+         return apology('No files uploaded', 400)
+
+      file_urls = []
+      for file in files:
+         file_url = upload_get_tmp(file)
+         file_urls.append(file_url)
+
+         
+
+
+
+
+
+
+
+
+
+   else:
+      rows = db.session.execute(text("SELECT * FROM gallery")).fetchall()
+      modified_rows = [dict(row._mapping) for row in rows]
 
 
 @app.route("/about")
