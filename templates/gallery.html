@@ -81,7 +81,7 @@
 
   <div class="container containerGallery mt-5">
     <div class="gallery-title">
-        <h1>NGO Event Gallery</h1>
+        <h1>Our Event Gallery</h1>
       </div>
       <div class="gallery-description">
         <p>Explore our past events through these photo galleries.</p>
@@ -98,7 +98,7 @@
             <div class="card cardGallery" data-toggle="modal" data-target="#event{{ row[0] }}Modal">
                 <img src="{{ row[2] }}" class="card-img-top" alt="{{ row[1] }}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ row[1] }}</h5>
+                    <h5 class="card-title">{{ row[1] }} [[{{ row[0] }}]] </h5>
                 </div>
             </div>
         </div>
@@ -145,29 +145,115 @@
         
 
   <!--Form-->
-  <h1>Admin Panel</h1>
-  <form action="/gallery" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
-  <div class="row g-3">
-    <div class="col-sm-6">
-      <label for="firstName" class="form-label">Event Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
-      <input type="text" name="event_name" class="form-control" id="firstName" placeholder="" value="" required>
-      <div class="invalid-feedback">
-        Valid Event name is required.
-      </div>
-    </div>
+  <script>
+    function validateForm() {
+        // Add validation logic here @DevMehta13
+        return true;
+    }
+
+    function toggleForms() {
+        const addForm = document.getElementById('addForm');
+        const editForm = document.getElementById('editForm');
+        const addRadio = document.getElementById('addRadio');
+        const editRadio = document.getElementById('editRadio');
+
+        if (addRadio.checked) {
+            addForm.style.display = 'block';
+            editForm.style.display = 'none';
+            enableFormFields(addForm);
+            disableFormFields(editForm);
+        } else if (editRadio.checked) {
+            addForm.style.display = 'none';
+            editForm.style.display = 'block';
+            enableFormFields(editForm);
+            disableFormFields(addForm);
+        }
+    }
+
+    function disableFormFields(form) {
+        const elements = form.querySelectorAll('input, textarea, select');
+        elements.forEach(element => {
+            element.disabled = true;
+        });
+    }
+
+    function enableFormFields(form) {
+        const elements = form.querySelectorAll('input, textarea, select');
+        elements.forEach(element => {
+            element.disabled = false;
+        });
+    }
+
+    window.onload = function() {
+        toggleForms();
+    };
+</script>
+<h1>Admin Panel</h1>
+<form action="/gallery" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
     <div class="mb-3">
-      <label for="formFile" class="form-label">Default file input example</label>
-      <input class="form-control" name="thumbnail" type="file" id="formFile">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" id="addRadio" name="formToggle" value="add" onclick="toggleForms()" checked>
+            <label class="form-check-label" for="addRadio">Add Event</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" id="editRadio" name="formToggle" value="edit" onclick="toggleForms()">
+            <label class="form-check-label" for="editRadio">Edit Event</label>
+        </div>
     </div>
-    <div class="mb-3">
-      <label for="formFileMultiple" class="form-label">Upload Images(You can add upto 50 images)</label>
-      <input class="form-control" name="files" accept="image/*" type="file" id="formFileMultiple" multiple>
+
+    <!-- Add Event Form -->
+    <div id="addForm" style="display: block;">
+        <input type="hidden" name="action" value="add">
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <label for="addEventName" class="form-label">Event Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                <input type="text" name="event_name" class="form-control" id="addEventName" placeholder="" value="" required>
+                <div class="invalid-feedback">
+                    Valid Event name is required.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="addThumbnail" class="form-label">Upload Thumbnail <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                <input class="form-control" name="thumbnail" accept="image/*" type="file" id="addThumbnail">
+            </div>
+            <div class="mb-3">
+                <label for="addImages" class="form-label">Upload Images (You can add up to 10 images) <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                <input class="form-control" name="files" accept="image/*" type="file" id="addImages" multiple>
+            </div>
+            <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Add</button>
+        </div>
     </div>
-    <button class="w-100 btn  btn-lg" type="submit"
-              style="color: white; background-color: #2f6e9c;">Submit</button>
-    
-    
-        </form>
-  <!--Form End-->
+
+    <!-- Edit Event Form -->
+    <div id="editForm" style="display: none;">
+        <input type="hidden" name="action" value="edit">
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <label for="editEventID" class="form-label">Event ID <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                <input type="text" name="event_id" class="form-control" id="editEventID" placeholder="" value="" required>
+                <div class="invalid-feedback">
+                    Valid Event ID is required.
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label for="editEventName" class="form-label">Event Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                <input type="text" name="event_name" class="form-control" id="editEventName" placeholder="" value="" required>
+                <div class="invalid-feedback">
+                    Valid Event name is required.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="editThumbnail" class="form-label">Upload Thumbnail <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                <input class="form-control" name="thumbnail" accept="image/*" type="file" id="editThumbnail">
+            </div>
+            <div class="mb-3">
+                <label for="editImages" class="form-label">Upload Images (You can add up to 10 images) <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                <input class="form-control" name="files" accept="image/*" type="file" id="editImages" multiple>
+            </div>
+            <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Edit</button>
+        </div>
+    </div>
+</form>
+<!--Form End-->
   {% endblock %}
 
