@@ -133,9 +133,12 @@ def gallery():
    
 
 
-@app.route("/about")
+@app.route("/about", methods=["GET", "POST"])
 def about():
-   return render_template("about.html")
+   if request.method == "POST":
+      ...
+   else:
+      return render_template("about.html")
 
 
 @app.route("/blind" , methods=["GET", "POST"])
