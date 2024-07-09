@@ -1,87 +1,10 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Login
+    About Us
 {% endblock %}
 {% block main %}
-    <div class="bgcolor" style="padding-top: 30px;">
-        <h2 style="margin-left: 105px;">About Organisation</h2>
-
-        <div class="container  col-xxl-11 px-1 ">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12 col-sm-8 col-lg-4">
-                    <img src="/static/andhdi.jpg" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700"
-                        height="100" loading="lazy">
-                </div>
-                <div class="col-lg-8">
-
-                    <p class="lead" style=" text-align: left;">Quickly design and customize responsive mobile-first sites with Bootstrap, the
-                        world’s
-                        s around the world. Founded in [Year], our mission is to empower individuals and communities by providing them with the necessary resources, education, and support to achieve self-sufficiency and improved quality of life.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-                        
-                        five centuries, but also the leap into electronic typesetting,</p>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
-    <div id="vision">
-        <h2 style="margin-left: 105px;">Vision</h2>
-        <div class="container">
-            <p>Empowering Communities, Transforming Lives
-                s around the world. Founded in [Year], our mission is to empower individuals and communities by providing them with the necessary resources, education, and support to achieve self-sufficiency and improved quality of life.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-                 equitable world. Through collaborative efforts and innovative solutions, we aim to
-                transform
-                lives
-                and create lasting impacts that span generations.</p>
-
-                <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-                    <div class="feature col">
-                      <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
-                        <img class="img-aim" src="/static/briefcase.svg" height="30px" />
-                      </div>
-                      <h3 class="fs-2 text-body-emphasis">Featured title</h3>
-                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
-                    </div>
-                    <div class="feature col">
-                      <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
-                        <img class="img-aim" src="/static/briefcase.svg" height="30px" />
-                      </div>
-                      <h3 class="fs-2 text-body-emphasis">Featured title</h3>
-                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
-                    </div>
-                    <div class="feature col">
-                      <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
-                        <img class="img-aim" src="/static/briefcase.svg" height="30px" />
-                      </div>
-                      <h3 class="fs-2 text-body-emphasis">Featured title</h3>
-                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
-                    </div>
-                  </div>
-                </div>
-        </div>
-    </div>
-
-    <hr>
-
-    <div id="founders">
-        <h2 style="margin-left: 105px;">Founders</h2>
-    
-        <div class="container" style="margin-top: 70px;">
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                <div class="col">
-                    <div class="card" style="border: none;">
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px;"> 
-                            <img src="/static/card1.jpg" class="card-img-top rounded-circle carousel-thumbnail img-fluid mb-3 mb-md-0" alt="...">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <div>
-                                <style>
+<style>
     .popup {
         position: fixed;
         z-index: 1;
@@ -158,87 +81,122 @@
         }
     }
 </style>
-                                
-                                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                    <button class="btn btn-primary btn-card btn-all" id="myButton1">Know More</button>
-                                </div>
-                                <div id="myPopup1" class="popup">
-                                    <div class="popup-content">
-                                        <h1>Founder 1</h1>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque tempora temporibus beatae totam qui et voluptates non id laborum obcaecati cumque earum sed mollitia maxime, reiciendis delectus! Suscipit, modi quas.</p>
-                                        <button id="closePopup1">Close</button>
-                                    </div>
-                                </div>
-                                
-                                <script>
-                                    const myButton1 = document.getElementById("myButton1");
-                                    const myPopup1 = document.getElementById("myPopup1");
-                                    const closePopup1 = document.getElementById("closePopup1");
-                                
-                                    myButton1.addEventListener("click", function () {
-                                        myPopup1.classList.add("show");
-                                    });
-                                
-                                    closePopup1.addEventListener("click", function () {
-                                        myPopup1.classList.remove("show");
-                                    });
-                                
-                                    window.addEventListener("click", function (event) {
-                                        if (event.target == myPopup1) {
-                                            myPopup1.classList.remove("show");
-                                        }
-                                    });
-                                </script>
-                            </div>
-                        </div>
-                    </div>
+
+    <div class="bgcolor" style="padding-top: 30px;">
+        <h2 style="margin-left: 105px;">About Organisation</h2>
+
+        <div class="container  col-xxl-11 px-1 ">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12 col-sm-8 col-lg-4">
+                    <img src="/static/andhdi.jpg" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700"
+                        height="100" loading="lazy">
                 </div>
-                <div class="col">
-                    <div class="card" style="border: none;">
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px;"> 
-                            <img src="/static/card1.jpg" class="card-img-top rounded-circle carousel-thumbnail img-fluid mb-3 mb-md-0" alt="...">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...........</p>
-                            <div>
-                                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                    <button class="btn btn-primary btn-card btn-all" id="myButton2">Know More</button>
-                                </div>
-                                <div id="myPopup2" class="popup">
-                                    <div class="popup-content">
-                                        <h1>Founder 2</h1>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque tempora temporibus beatae totam qui et voluptates non id laborum obcaecati cumque earum sed mollitia maxime, reiciendis delectus! Suscipit, modi quas.</p>
-                                        <button id="closePopup2">Close</button>
-                                    </div>
-                                </div>
-                                
-                                <script>
-                                    const myButton2 = document.getElementById("myButton2");
-                                    const myPopup2 = document.getElementById("myPopup2");
-                                    const closePopup2 = document.getElementById("closePopup2");
-                                
-                                    myButton2.addEventListener("click", function () {
-                                        myPopup2.classList.add("show");
-                                    });
-                                
-                                    closePopup2.addEventListener("click", function () {
-                                        myPopup2.classList.remove("show");
-                                    });
-                                
-                                    window.addEventListener("click", function (event) {
-                                        if (event.target == myPopup2) {
-                                            myPopup2.classList.remove("show");
-                                        }
-                                    });
-                                </script>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-lg-8">
+
+                    <p class="lead" style=" text-align: left;">Quickly design and customize responsive mobile-first sites with Bootstrap, the
+                        world’s
+                        s around the world. Founded in [Year], our mission is to empower individuals and communities by providing them with the necessary resources, education, and support to achieve self-sufficiency and improved quality of life.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+                        
+                        five centuries, but also the leap into electronic typesetting,</p>
+
                 </div>
             </div>
         </div>
     </div>
+
+    <hr>
+
+    <div id="vision">
+        <h2 style="margin-left: 105px;">Vision</h2>
+        <div class="container">
+            <p>Empowering Communities, Transforming Lives
+                s around the world. Founded in [Year], our mission is to empower individuals and communities by providing them with the necessary resources, education, and support to achieve self-sufficiency and improved quality of life.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+                 equitable world. Through collaborative efforts and innovative solutions, we aim to
+                transform
+                lives
+                and create lasting impacts that span generations.</p>
+
+                <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+                    <div class="feature col">
+                      <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
+                        <img class="img-aim" src="/static/briefcase.svg" height="30px" />
+                      </div>
+                      <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+                    </div>
+                    <div class="feature col">
+                      <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
+                        <img class="img-aim" src="/static/briefcase.svg" height="30px" />
+                      </div>
+                      <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+                    </div>
+                    <div class="feature col">
+                      <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3" style="background-color: #2f6e9c;">
+                        <img class="img-aim" src="/static/briefcase.svg" height="30px" />
+                      </div>
+                      <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,</p>
+                    </div>
+                  </div>
+                </div>
+        </div>
+    </div>
+
+    <hr>
+    <div id="founders">
+        <h2 style="margin-left: 105px;">Founders</h2>
+        <div class="container" style="margin-top: 70px;">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% for row in rows %}
+                <div class="col">
+                    <div class="card" style="border: none;">
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px;"> 
+                            <img src="{{ row.photo_url }}" class="card-img-top rounded-circle carousel-thumbnail img-fluid mb-3 mb-md-0" alt="...">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ row.name }} [[{{ row.id }}]] </h5>
+                            <p class="card-text">{{ row.short_desc }} </p>
+                            {% if row.long_desc %}
+                            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <button class="btn btn-primary btn-card btn-all popup-btn" data-popup="popup1">Know More</button>
+                            </div>
+                            <div id="popup1" class="popup">
+                                <div class="popup-content">
+                                    <h1>{{ row.name }} </h1>
+                                    <p>{{ row.long_desc }} </p>
+                                    <button class="close-popup">Close</button>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- script for founders card -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('popup-btn')) {
+                    const popupId = event.target.getAttribute('data-popup');
+                    const popup = document.getElementById(popupId);
+                    popup.classList.add('show');
+                }
+                
+                if (event.target.classList.contains('close-popup')) {
+                    const popup = event.target.closest('.popup');
+                    popup.classList.remove('show');
+                }
+    
+                if (event.target.classList.contains('popup')) {
+                    event.target.classList.remove('show');
+                }
+            });
+        });
+    </script>
 
 
     <hr>
@@ -249,17 +207,22 @@
 
         <div class="container">
             <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for row in rows_team %}
                 <div class="col">
                     <div class="card" style="border: none;">
                         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px;">
-                            <img src="/static/card1.jpg" class="card-img-top rounded-circle carousel-thumbnail img-fluid mb-3 mb-md-0" alt="...">
+                            <img src="{{ row.photo_url }}" class="card-img-top rounded-circle carousel-thumbnail img-fluid mb-3 mb-md-0" alt="...">
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <h5 class="card-title">{{ row.name }} [[{{ row.id }}]] </h5>
+                            <p class="card-text">{{ row.short_desc }} </p>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
+                <!-- The below card are static  -->
+                 <!-- Just added for knowing the look of the page  -->
+                  <!-- these will be removed at the time of deployment -->
                 <div class="col">
                     <div class="card" style="border: none;">
                         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px;">
@@ -359,5 +322,329 @@
             </div>
         </div>
         
+    </div>
+    <script>
+        function validateForm() {
+            // Add validation logic here @DevMehta13
+            return true;
+        }
+
+        function toggleForms() {
+            const addFounderForm = document.getElementById('addFounderForm');
+            const editFounderForm = document.getElementById('editFounderForm');
+            const addTeamForm = document.getElementById('addTeamForm');
+            const editTeamForm = document.getElementById('editTeamForm');
+            const addRadio = document.getElementById('addRadio');
+            const editRadio = document.getElementById('editRadio');
+            const actionTypeAddFounder = document.getElementById('actionTypeAddFounder');
+            const actionTypeEditFounder = document.getElementById('actionTypeEditFounder');
+            const actionTypeAddTeam = document.getElementById('actionTypeAddTeam');
+            const actionTypeEditTeam = document.getElementById('actionTypeEditTeam');
+
+            if (addRadio.checked) {
+                addFounderForm.style.display = 'block';
+                editFounderForm.style.display = 'none';
+                addTeamForm.style.display = 'block';
+                editTeamForm.style.display = 'none';
+                enableFormFields(addFounderForm);
+                disableFormFields(editFounderForm);
+                enableFormFields(addTeamForm);
+                disableFormFields(editTeamForm);
+                actionTypeAddFounder.value = 'add';
+                actionTypeEditFounder.value = 'add';
+                actionTypeAddTeam.value = 'add';
+                actionTypeEditTeam.value = 'add';
+            } else if (editRadio.checked) {
+                addFounderForm.style.display = 'none';
+                editFounderForm.style.display = 'block';
+                addTeamForm.style.display = 'none';
+                editTeamForm.style.display = 'block';
+                enableFormFields(editFounderForm);
+                disableFormFields(addFounderForm);
+                enableFormFields(editTeamForm);
+                disableFormFields(addTeamForm);
+                actionTypeAddFounder.value = 'edit';
+                actionTypeEditFounder.value = 'edit';
+                actionTypeAddTeam.value = 'edit';
+                actionTypeEditTeam.value = 'edit';
+            }
+        }
+
+        function disableFormFields(form) {
+            const elements = form.querySelectorAll('input, textarea, select');
+            elements.forEach(element => {
+                element.disabled = true;
+            });
+        }
+
+        function enableFormFields(form) {
+            const elements = form.querySelectorAll('input, textarea, select');
+            elements.forEach(element => {
+                element.disabled = false;
+            });
+        }
+
+        window.onload = function() {
+            toggleForms();
+        };
+    </script>
+    <div class="container">
+        <h1>Admin Panel</h1>
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="addRadio" name="formToggle" value="add" onclick="toggleForms()" checked>
+                <label class="form-check-label" for="addRadio">Add</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="editRadio" name="formToggle" value="edit" onclick="toggleForms()">
+                <label class="form-check-label" for="editRadio">Edit</label>
+            </div>
+        </div>
+    <h2>Founders</h2>
+    <form action="/founders" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <!-- Add Event Form -->
+        <div id="addFounderForm" style="display: block;">
+            <input type="hidden" id="actionTypeAddFounder" name="actionType" value="add">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label for="addEventName" class="form-label">Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="name" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="addThumbnail" class="form-label">Upload Profile Photo<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input class="form-control" name="photo" accept="image/*" type="file" id="addThumbnail">
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Short Description<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="short_desc" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">Slightly longer description</label>
+                    <textarea class="form-control" name="long_desc" id="exampleFormControlTextarea1" rows="3"></textarea>
+                  </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">LinkedIn url</label>
+                    <input type="text" name="linkedin_url" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Instagram url</label>
+                    <input type="text" name="instagram_url" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Twitter url</label>
+                    <input type="text" name="twitter_url" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Add</button>
+            </div>
+        </div>
+
+        <!-- Edit Event Form -->
+        <div id="editFounderForm" style="display: none;">
+            <input type="hidden" id="actionTypeEditFounder" name="actionType" value="edit">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label for="addEventName" class="form-label">Founder Id<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="number" name="founder_id" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label for="addEventName" class="form-label">Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="name" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="addThumbnail" class="form-label">Upload Profile Photo<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input class="form-control" name="photo" accept="image/*" type="file" id="addThumbnail">
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Short Description<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="short_desc" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">Slightly longer description</label>
+                    <textarea class="form-control" name="long_desc" id="exampleFormControlTextarea1" rows="3"></textarea>
+                  </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">LinkedIn url</label>
+                    <input type="text" name="linkedin_url" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Instagram url</label>
+                    <input type="text" name="instagram_url" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label for="addEventName" class="form-label">Twitter url</label>
+                    <input type="text" name="twitter_url" class="form-control" id="addEventName" placeholder="" value="">
+                    <div class="invalid-feedback">
+                        Valid Name is required.
+                    </div>
+                </div>
+                <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Edit</button>
+            </div>
+        </div>
+    </form>
+</div>
+    <div class="container">
+        <h2>Our Team</h2>
+        <form action="/team-info" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <!-- Add Event Form -->
+            <div id="addTeamForm" style="display: block;">
+                <input type="hidden" id="actionTypeAddTeam" name="actionType" value="add">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="addEventName" class="form-label">Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                        <input type="text" name="name" class="form-control" id="addEventName" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addThumbnail" class="form-label">Upload Profile Photo<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                        <input class="form-control" name="photo" accept="image/*" type="file" id="addThumbnail">
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Short Description<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                        <input type="text" name="short_desc" class="form-control" id="addEventName" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">LinkedIn url</label>
+                        <input type="text" name="linkedin_url" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Instagram url</label>
+                        <input type="text" name="instagram_url" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Twitter url</label>
+                        <input type="text" name="twitter_url" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Add</button>
+                </div>
+            </div>
+    
+            <!-- Edit Event Form -->
+            <div id="editTeamForm" style="display: none;">
+                <input type="hidden" id="actionTypeEditTeam" name="actionType" value="edit">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="addEventName" class="form-label">Team Member Id<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                        <input type="number" name="team_id" class="form-control" id="addEventName" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="addEventName" class="form-label">Name <span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                        <input type="text" name="name" class="form-control" id="addEventName" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addThumbnail" class="form-label">Upload Profile Photo<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                        <input class="form-control" name="photo" accept="image/*" type="file" id="addThumbnail">
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Short Description<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                        <input type="text" name="short_desc" class="form-control" id="addEventName" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">LinkedIn url</label>
+                        <input type="text" name="linkedin_url" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Instagram url</label>
+                        <input type="text" name="instagram_url" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label for="addEventName" class="form-label">Twitter url</label>
+                        <input type="text" name="twitter_url" class="form-control" id="addEventName" placeholder="" value="">
+                        <div class="invalid-feedback">
+                            Valid Name is required.
+                        </div>
+                    </div>
+                    <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Edit</button>
+                </div>
+            </div>
+        </form>
     </div>
     {% endblock %}

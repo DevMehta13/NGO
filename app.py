@@ -135,10 +135,149 @@ def gallery():
 
 @app.route("/about", methods=["GET", "POST"])
 def about():
+   if request.method == "GET":
+      rows = db.session.execute(text("SELECT * FROM founders")).fetchall()
+      modified_rows = [dict(row._mapping) for row in rows]
+      # return jsonify(modified_rows)
+
+      rows_team = db.session.execute(text("SELECT * FROM team_info")).fetchall()
+      modified_rows_team = [dict(row._mapping) for row in rows_team]
+
+      # return jsonify(modified_rows_team)
+      #TODO: update about.html for cards
+      return render_template("about.html", rows=modified_rows, rows_team=modified_rows_team)
+
+
+@app.route("/founders", methods=["POST"])
+def founders():
    if request.method == "POST":
-      ...
-   else:
-      return render_template("about.html")
+      action = request.form.get("actionType")
+      name = request.form.get("name")
+      photo = request.files.get("photo")
+      short_desc = request.form.get("short_desc")
+      long_desc = request.form.get("long_desc")
+      instagram_url = request.form.get("instagram_url")
+      linkedin_url = request.form.get("linkedin_url")
+      email = request.form.get("email")
+      twitter_url = request.form.get("twitter_url")
+
+      if not name:
+         return apology("Must provide Name", 403)
+      if not photo:
+         return apology("Must Provide profile photo", 403)
+      if not short_desc:
+         return ("Must provide short description", 403)
+      
+      photo_url = upload_get_tmp(photo)
+      
+      data = {
+         "name": name,
+         "short_desc": short_desc,
+         "long_desc": long_desc,
+         "photo_url": photo_url,
+         "email": email,
+         "linkedin_url": linkedin_url,
+         "twitter_url": twitter_url,
+         "instagram_url": instagram_url
+      }
+
+      column_names = ', '.join(data.keys())
+      placeholders = ', '.join([f':{key}' for key in data.keys()])
+
+      if action == "add":
+         query = text(f"""
+            INSERT INTO founders ({column_names})
+            VALUES ({placeholders})
+         """)
+
+      if action == "edit":
+         # Update operation
+         founder_id = request.form.get("founder_id")
+         if not founder_id:
+            flash("Must provide event founder_id", "danger")
+            return redirect(url_for("about"))
+         data["founder_id"] = founder_id
+         query = text(f"""
+            UPDATE founders
+            SET {', '.join([f"{key} = :{key}" for key in data.keys() if key != "founder_id"])}
+            WHERE id = :founder_id
+         """)
+
+      try:
+         db.session.execute(query, data)
+         db.session.commit()
+      except Exception as e:
+         db.session.rollback()
+         return f"an error occured {str(e)}"
+
+
+      flash("Founders Updated!")
+      return redirect("/about")
+
+
+@app.route("/team-info", methods=["POST"])
+def team_info():
+   if request.method == "POST":
+      action = request.form.get("actionType")
+      name = request.form.get("name")
+      photo = request.files.get("photo")
+      short_desc = request.form.get("short_desc")
+      instagram_url = request.form.get("instagram_url")
+      linkedin_url = request.form.get("linkedin_url")
+      email = request.form.get("email")
+      twitter_url = request.form.get("twitter_url")
+
+      if not name:
+         return apology("Must provide Name", 403)
+      if not photo:
+         return apology("Must Provide profile photo", 403)
+      if not short_desc:
+         return ("Must provide short description", 403)
+      
+      photo_url = upload_get_tmp(photo)
+      
+      data = {
+         "name": name,
+         "short_desc": short_desc,
+         "photo_url": photo_url,
+         "email": email,
+         "linkedin_url": linkedin_url,
+         "twitter_url": twitter_url,
+         "instagram_url": instagram_url
+      }
+
+      column_names = ', '.join(data.keys())
+      placeholders = ', '.join([f':{key}' for key in data.keys()])
+
+      if action == "add":
+         query = text(f"""
+            INSERT INTO team_info ({column_names})
+            VALUES ({placeholders})
+         """)
+
+      if action == "edit":
+         # Update operation
+         team_id = request.form.get("team_id")
+         if not team_id:
+            flash("Must provide event team_id", "danger")
+            return redirect(url_for("about"))
+         data["team_id"] = team_id
+         query = text(f"""
+            UPDATE team_info
+            SET {', '.join([f"{key} = :{key}" for key in data.keys() if key != "team_id"])}
+            WHERE id = :team_id
+         """)
+
+      try:
+         db.session.execute(query, data)
+         db.session.commit()
+      except Exception as e:
+         db.session.rollback()
+         return f"an error occured {str(e)}"
+
+
+      flash("Team members Updated!")
+      return redirect("/about")
 
 
 @app.route("/blind" , methods=["GET", "POST"])
