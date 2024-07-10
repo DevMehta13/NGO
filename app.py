@@ -26,7 +26,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ekprayas.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)   
 
 # Ensure the upload directory exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -50,12 +50,11 @@ def index():
 
 @app.route("/gallery", methods=["GET", "POST"])
 def gallery():
-    
    if request.method == "POST":
+      action = request.form.get("formToggle")
       event_name = request.form.get("event_name")
       thumbnail = request.files.get("thumbnail")
       files = request.files.getlist('files')
-
 
       if not event_name:
          flash("Must provide event name", "danger")
@@ -63,27 +62,19 @@ def gallery():
       
       if not thumbnail:
          flash("Must provide thumbnail", "danger")
-         return redirect(url_for("book"))
+         return redirect(url_for("gallery"))
       
       if not files:
          flash("Must provide files", "danger")
-         return redirect(url_for("book"))
-
-      if not files:
-         return apology('No files uploaded', 400)
+         return redirect(url_for("gallery"))
+         
 
       file_urls = []
       for file in files:
          file_url = upload_get_tmp(file)
          file_urls.append(file_url)
 
-
-      
-
-
-
       thumbnail_url = upload_get_tmp(thumbnail)
-
 
       data = {
         "event_name": event_name,
@@ -91,6 +82,13 @@ def gallery():
         "img1_url": file_urls[0] if len(file_urls) > 0 else None,
         "img2_url": file_urls[1] if len(file_urls) > 1 else None,
         "img3_url": file_urls[2] if len(file_urls) > 2 else None,
+        "img4_url": file_urls[3] if len(file_urls) > 3 else None,
+        "img5_url": file_urls[4] if len(file_urls) > 4 else None,
+        "img6_url": file_urls[5] if len(file_urls) > 5 else None,
+        "img7_url": file_urls[6] if len(file_urls) > 6 else None,
+        "img8_url": file_urls[7] if len(file_urls) > 7 else None,
+        "img9_url": file_urls[8] if len(file_urls) > 8 else None,
+        "img10_url": file_urls[9] if len(file_urls) > 9 else None,
         # Add more as needed up to img50_url
       }
 
@@ -98,10 +96,24 @@ def gallery():
       column_names = ', '.join(data.keys())
       placeholders = ', '.join([f':{key}' for key in data.keys()])
 
-      query = text(f"""
-         INSERT INTO photo_gallery ({column_names})
-         VALUES ({placeholders})
-      """)
+      if action == "add":
+         query = text(f"""
+            INSERT INTO photo_gallery ({column_names})
+            VALUES ({placeholders})
+         """)
+
+      if action == "edit":
+         # Update operation
+         event_id = request.form.get("event_id")
+         if not event_id:
+            flash("Must provide event id", "danger")
+            return redirect(url_for("gallery"))
+         data["event_id"] = event_id
+         query = text(f"""
+            UPDATE photo_gallery
+            SET {', '.join([f"{key} = :{key}" for key in data.keys() if key != "event_id"])}
+            WHERE id = :event_id
+         """)
 
       try:
          db.session.execute(query, data)
@@ -111,14 +123,8 @@ def gallery():
          return f"an error occured {str(e)}"
 
 
-      flash("Thank You for Submitting Form We Will Get Back to you Soon.")
-
+      flash("Photo Gallery Updated!")
       return redirect("/gallery")
-
-   
-
-
-
 
    else:
       rows = db.session.execute(text("SELECT * FROM photo_gallery ORDER BY id DESC")).fetchall()
@@ -128,9 +134,151 @@ def gallery():
    
 
 
-@app.route("/about")
+@app.route("/about", methods=["GET", "POST"])
 def about():
-   return render_template("about.html")
+   if request.method == "GET":
+      rows = db.session.execute(text("SELECT * FROM founders")).fetchall()
+      modified_rows = [dict(row._mapping) for row in rows]
+      # return jsonify(modified_rows)
+
+      rows_team = db.session.execute(text("SELECT * FROM team_info")).fetchall()
+      modified_rows_team = [dict(row._mapping) for row in rows_team]
+
+      # return jsonify(modified_rows_team)
+      #TODO: update about.html for cards
+      return render_template("about.html", rows=modified_rows, rows_team=modified_rows_team)
+
+
+@app.route("/founders", methods=["POST"])
+def founders():
+   if request.method == "POST":
+      action = request.form.get("actionType")
+      name = request.form.get("name")
+      photo = request.files.get("photo")
+      short_desc = request.form.get("short_desc")
+      long_desc = request.form.get("long_desc")
+      instagram_url = request.form.get("instagram_url")
+      linkedin_url = request.form.get("linkedin_url")
+      email = request.form.get("email")
+      twitter_url = request.form.get("twitter_url")
+
+      if not name:
+         return apology("Must provide Name", 403)
+      if not photo:
+         return apology("Must Provide profile photo", 403)
+      if not short_desc:
+         return ("Must provide short description", 403)
+      
+      photo_url = upload_get_tmp(photo)
+      
+      data = {
+         "name": name,
+         "short_desc": short_desc,
+         "long_desc": long_desc,
+         "photo_url": photo_url,
+         "email": email,
+         "linkedin_url": linkedin_url,
+         "twitter_url": twitter_url,
+         "instagram_url": instagram_url
+      }
+
+      column_names = ', '.join(data.keys())
+      placeholders = ', '.join([f':{key}' for key in data.keys()])
+
+      if action == "add":
+         query = text(f"""
+            INSERT INTO founders ({column_names})
+            VALUES ({placeholders})
+         """)
+
+      if action == "edit":
+         # Update operation
+         founder_id = request.form.get("founder_id")
+         if not founder_id:
+            flash("Must provide event founder_id", "danger")
+            return redirect(url_for("about"))
+         data["founder_id"] = founder_id
+         query = text(f"""
+            UPDATE founders
+            SET {', '.join([f"{key} = :{key}" for key in data.keys() if key != "founder_id"])}
+            WHERE id = :founder_id
+         """)
+
+      try:
+         db.session.execute(query, data)
+         db.session.commit()
+      except Exception as e:
+         db.session.rollback()
+         return f"an error occured {str(e)}"
+
+
+      flash("Founders Updated!")
+      return redirect("/about")
+
+
+@app.route("/team-info", methods=["POST"])
+def team_info():
+   if request.method == "POST":
+      action = request.form.get("actionType")
+      name = request.form.get("name")
+      photo = request.files.get("photo")
+      short_desc = request.form.get("short_desc")
+      instagram_url = request.form.get("instagram_url")
+      linkedin_url = request.form.get("linkedin_url")
+      email = request.form.get("email")
+      twitter_url = request.form.get("twitter_url")
+
+      if not name:
+         return apology("Must provide Name", 403)
+      if not photo:
+         return apology("Must Provide profile photo", 403)
+      if not short_desc:
+         return ("Must provide short description", 403)
+      
+      photo_url = upload_get_tmp(photo)
+      
+      data = {
+         "name": name,
+         "short_desc": short_desc,
+         "photo_url": photo_url,
+         "email": email,
+         "linkedin_url": linkedin_url,
+         "twitter_url": twitter_url,
+         "instagram_url": instagram_url
+      }
+
+      column_names = ', '.join(data.keys())
+      placeholders = ', '.join([f':{key}' for key in data.keys()])
+
+      if action == "add":
+         query = text(f"""
+            INSERT INTO team_info ({column_names})
+            VALUES ({placeholders})
+         """)
+
+      if action == "edit":
+         # Update operation
+         team_id = request.form.get("team_id")
+         if not team_id:
+            flash("Must provide event team_id", "danger")
+            return redirect(url_for("about"))
+         data["team_id"] = team_id
+         query = text(f"""
+            UPDATE team_info
+            SET {', '.join([f"{key} = :{key}" for key in data.keys() if key != "team_id"])}
+            WHERE id = :team_id
+         """)
+
+      try:
+         db.session.execute(query, data)
+         db.session.commit()
+      except Exception as e:
+         db.session.rollback()
+         return f"an error occured {str(e)}"
+
+
+      flash("Team members Updated!")
+      return redirect("/about")
 
 
 @app.route("/blind" , methods=["GET", "POST"])
