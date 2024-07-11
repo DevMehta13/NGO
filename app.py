@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
-from helpers import apology
+from helpers import apology,upload_to_excel
 
 app = Flask(__name__)
 
@@ -405,7 +405,12 @@ def blind():
          # return apology("An Error Occured", 500)
          # Displaying detailed errors is not safe so remove the below line when ready to deploy
          return f"An error occurred: {str(e)}"
-   
+
+      #Add data to excel
+      rows = db.session.execute(text("SELECT * FROM blind")).fetchall()
+      modified_rows = [dict(row._mapping) for row in rows]
+      upload_to_excel("static/blind.xlsx", modified_rows,"blind")
+
       flash("Thank You for Submitting Form We Will Get Back to you Soon.")
 
       return redirect("/blind")
@@ -529,6 +534,11 @@ def book():
          # Do not redirect to book page so that the user does not have to fill the form again
          return redirect(url_for("book"))
          
+      #Add data to excel
+      rows = db.session.execute(text("SELECT * FROM book")).fetchall()
+      modified_rows = [dict(row._mapping) for row in rows]
+      upload_to_excel("static/book.xlsx", modified_rows,"book")
+
       flash("Thank You for Submitting Form We Will Get Back to you Soon.")
 
       return redirect(url_for("book"))
@@ -677,9 +687,14 @@ def team():
          # Displaying detailed errors is not safe so remove the below line when ready to deploy
          return f"An error occurred: {str(e)}"
 
+      #Add data to excel
+      rows = db.session.execute(text("SELECT * FROM team")).fetchall()
+      modified_rows = [dict(row._mapping) for row in rows]
+      upload_to_excel("static/team.xlsx", modified_rows,"team")
+
       flash("Thank You for Submitting Form We Will Get Back to you Soon.")
 
-      return redirect(url_for("book"))
+      return redirect(url_for("team"))
 
    else:
       return render_template("team.html")
