@@ -1,0 +1,32 @@
+{% extends layout.html %}
+
+{% block title %}
+    Admin Dashboard
+{% endblock %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">Admin Dashboard</h1>
+            <ul class="list-group mt-4">
+                <li class="list-group-item">
+                    <a href="/admin/page1" class="btn btn-link">Manage Page 1</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="/admin/page2" class="btn btn-link">Manage Page 2</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="/admin/page3" class="btn btn-link">Manage Page 3</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="/admin/page4" class="btn btn-link">Manage Page 4</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="/admin/page5" class="btn btn-link">Manage Page 5</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
