@@ -14,11 +14,9 @@ from helpers import apology
 
 app = Flask(__name__)
 
-# Configure session to use filesystem (instead of signed cookies)
-# temporarily adding - then will use secret key when ready to use sessions and login
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+# Get the secret key from an environment variable
+app.config['SECRET_KEY'] = 'trial-secret-key-123'
+# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # Define the upload folder path within the static folder
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -33,14 +31,33 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 
+# Ensure the upload directory exists
+if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], 'secured')):
+    os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'secured'))
 
 
-def upload_get_tmp(file):
+def upload_get_public(file):
     filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    file_url = url_for('static', filename=f'uploads/{filename}')
-    return file_url
+    public_upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    
+    try:
+        file.save(public_upload_path)
+        file_url = url_for('static', filename=f'uploads/{filename}')
+        return file_url
+    except Exception as e:
+        return apology("Error upoading file", 403)
 
+
+def upload_get_secured(file):
+    filename = secure_filename(file.filename)
+    secured_upload_path = os.path.join(app.config['UPLOAD_FOLDER'], 'secured', filename)
+    
+    try:
+        file.save(secured_upload_path)
+        file_url = url_for('static', filename=f'uploads/secured/{filename}', _external=True)
+        return file_url
+    except Exception as e:
+        return apology("Error Uploading file", 403)
 
 
 @app.route("/" , methods=["GET", "POST"])
@@ -71,10 +88,10 @@ def gallery():
 
       file_urls = []
       for file in files:
-         file_url = upload_get_tmp(file)
+         file_url = upload_get_public(file)
          file_urls.append(file_url)
 
-      thumbnail_url = upload_get_tmp(thumbnail)
+      thumbnail_url = upload_get_public(thumbnail)
 
       data = {
         "event_name": event_name,
@@ -169,7 +186,7 @@ def founders():
       if not short_desc:
          return ("Must provide short description", 403)
       
-      photo_url = upload_get_tmp(photo)
+      photo_url = upload_get_public(photo)
       
       data = {
          "name": name,
@@ -235,7 +252,7 @@ def team_info():
       if not short_desc:
          return ("Must provide short description", 403)
       
-      photo_url = upload_get_tmp(photo)
+      photo_url = upload_get_public(photo)
       
       data = {
          "name": name,
@@ -331,7 +348,7 @@ def blind():
          return apology("Mobile number must be of 10 digits", 403)
       
       # Secure the filename
-      photo_filename_secure = secure_filename(photo.filename)
+      # photo_filename_secure = secure_filename(photo.filename)
 
       # Save the file to the upload folder
     #   photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo_filename_secure))
@@ -344,8 +361,8 @@ def blind():
     #   id_proof.save(os.path.join(app.config['UPLOAD_FOLDER'], id_proof_filename_secure))
 
     #   id_proof_url = url_for('static', filename=f'uploads/{id_proof_filename_secure}', _external=True)
-      photo_url = upload_get_tmp(photo)  
-      id_proof_url = upload_get_tmp(id_proof)
+      photo_url = upload_get_secured(photo)  
+      id_proof_url = upload_get_secured(id_proof)
       # TODO: Test this code after hosting this online to ensure that the files are stored
       # and also accessible by backend and ngo admin too 
       # TODO: MAKE A FUNCTION TO STORE THESE FILES 
@@ -357,18 +374,6 @@ def blind():
 
       # # Generate the URL
       # id_proof_url = f"/uploads/{id_proof.filename}"
-
-
-
-
-
-      # #TODO: Make the apology function and return the apology template
-      # if not gender:
-      #    return "gender is required"
-      
-
-      # if not languages:
-      #    return "Error: At least one language must be selected", 400
       
       
       try:
@@ -414,8 +419,6 @@ def blind():
       return render_template("blind.html")
 
    
-
-
 @app.route("/book", methods=["GET", "POST"])
 def book():
    if request.method == "POST":
@@ -489,7 +492,7 @@ def book():
     #   if not os.path.exists(upload_directory):
     #      os.makedirs(upload_directory)
 
-      audio_url = upload_get_tmp(audio)  
+      audio_url = upload_get_secured(audio)  
 
       try:
          languages_str = ','.join(languages)  # Convert list to comma-separated string
@@ -559,55 +562,61 @@ def team():
 
 
       if not first_name:
-         return "must provide you first_name"
+         return apology("must provide you first_name", 403)
       
       if not last_name:
-         return "must provide last_name"
+         return apology("must provide last_name", 403)
       
       if not gender:
-         return "must provide your gender"
+         return apology("must provide your gender", 403)
       
       if not email:
-         return "must provide email"
+         return apology("must provide email", 403)
 
       if not mobile_number:
-         return "must provide mobile_number"
+         return apology("must provide mobile_number", 403)
       
       if not address:
-         return "must provide address"
+         return apology("must provide address", 403)
 
       if not occupation:
-         return "must provide your occupation"
+         return apology("must provide your occupation", 403)
       
       if not occupation_address:
-         return "must provide your occupation_address"
+         return apology("must provide your occupation address", 403)
       
       if not education:
-         return "must provide education"
+         return apology("must provide education", 403)
       
       if not about:
-         return "must provide about"
+         return apology("must provide about", 403)
       
       if not make_change:
-         return "must provide make_change"
+         return apology("must provide make change", 403)
       
       if not aadhar_number:
-         return "must provide aadhar_number"
+         return apology("must provide aadhar number", 403)
       
       if not pan_number:
-         return "must provide pan_number"
+         return apology("must provide pan number", 403)
       
       if not aadhar_card:
-         return "must provide aadhar_card"
+         return apology("must provide aadhar_card", 403)
       
       if not pan_card:
-         return "must provide pan_card"
+         return apology("must provide pan_card", 403)
       
       if not photo:
-         return "must provide your photo"
+         return apology("must provide your photo", 403)
       
       if len(mobile_number) != 10:
          return apology("Mobile number must be of 10 digits", 403)
+      
+      if len(aadhar_number) != 12:
+         return apology("Aadhar number must be of 12 digits wthout any space and symbols", 403)
+      
+      if len(pan_number) != 10:
+         return apology("Pan number must be of 10 characters", 403)
 
     #   file_path = os.path.join('uploads', aadhar_card.filename)
     #   aadhar_card.save(file_path)
@@ -626,17 +635,9 @@ def team():
 
     #   # Generate the URL
     #   photo_url = f"/uploads/{photo.filename}"
-      aadhar_card_url = upload_get_tmp(aadhar_card)  
-      pan_card_url = upload_get_tmp(pan_card)
-      photo_url = upload_get_tmp(photo)
-
-
-      #TODO: Make the apology function and return the apology template
-      if not gender:
-         return "gender is required"
-      # else:
-      #    return f"{gender}"
-
+      aadhar_card_url = upload_get_secured(aadhar_card)  
+      pan_card_url = upload_get_secured(pan_card)
+      photo_url = upload_get_secured(photo)
 
       try:
 
@@ -685,8 +686,6 @@ def team():
       return render_template("team.html")
 
    
-
-
 @app.route("/initiative")
 def initiative():
    return render_template("initiative.html")
@@ -703,15 +702,15 @@ def server_error(e):
 
 
 
-@app.route("/testing")
-def testing():
-   rows = db.session.execute(
-      text(
-         "SELECT photo_url FROM blind WHERE id = 8"
-      ),
-   ).fetchall()
-   image = rows[0][0]
-   return f"{image}"
+# @app.route("/testing")
+# def testing():
+#    rows = db.session.execute(
+#       text(
+#          "SELECT photo_url FROM blind WHERE id = 8"
+#       ),
+#    ).fetchall()
+#    image = rows[0][0]
+#    return f"{image}"
 
 
 if __name__ == "__main__":
