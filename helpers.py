@@ -1,6 +1,8 @@
 import os
 from flask import redirect, render_template, request, session, send_file, url_for
 from functools import wraps
+import pandas as pd
+
 
 # ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_USERNAME = "admin"
@@ -37,3 +39,14 @@ def admin_login_required(f):
             return redirect(url_for('admin_login'))
         return f(*args, **kwargs)
     return decorated_function
+
+
+def upload_to_excel(path: str, data, sheet_name):
+
+    # Convert the list of dictionaries to a DataFrame
+    df = pd.DataFrame(data)
+
+    # Write the combined DataFrame back to the Excel file
+    df.to_excel(path, sheet_name=sheet_name, index=False)
+    print(f"Data saved to {path}")
+

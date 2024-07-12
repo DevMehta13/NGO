@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Gallery</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: auto;
+}
+
+.card:hover {
+  transform: scale(1.05); /* Adjust the scale factor for zoom effect */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Adjust shadow properties for the glow effect */
+}
+.container {
+           
+            font-family: Arial, Helvetica, sans-serif;
+            animation: colorChange 20s infinite;
+            transition: background-color 2s;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        @keyframes colorChange {
+            0% {
+                background-color: aliceblue;
+            }
+            20% {
+                background-color: #b0e0e6; /* PowderBlue */
+            }
+            40% {
+                background-color: #add8e6; /* LightBlue */
+            }
+            60% {
+                background-color: #87ceeb; /* SkyBlue */
+            }
+            80% {
+                background-color: #87cefa; /* LightSkyBlue */
+            }
+            100% {
+                background-color: aliceblue;
+            }
+        }
+.col-md-6{
+    padding: 20px;
+}
+
+.gallery-title {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-decoration: underline green;
+    }
+
+    .gallery-description {
+      text-align: center;
+   
+      font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="gallery-title">
+            <h1>NGO Event Gallery</h1>
+          </div>
+          <div class="gallery-description">
+            <p>Explore our past events through these photo galleries.</p>
+          </div>
+        <div class="row">
+            <!-- Video Card 1 -->
+            <div class="col-md-6">
+                <div class="card" >
+                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/1fTb6746zoE?si=OPJKQABmP9l4jpop" height="280px"  allowfullscreen></iframe>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 2</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Card 2 -->
+            <div class="col-md-6">
+                <div class="card" >
+                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/1fTb6746zoE?si=OPJKQABmP9l4jpop" height="300px"  allowfullscreen></iframe>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 2</h5>
+                    </div>
+                </div>
+            </div>
+
+          
+        </div>
+
+        <div class="row">
+            <!-- Video Card 3 -->
+            <div class="col-md-6">
+                <div class="card" >
+                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/1fTb6746zoE?si=OPJKQABmP9l4jpop" height="300px"  allowfullscreen></iframe>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 2</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Card 4 -->
+            <div class="col-md-6">
+                <div class="card" >
+                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/1fTb6746zoE?si=OPJKQABmP9l4jpop" height="300px"  allowfullscreen></iframe>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 2</h5>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+
+        <div class="row">
+            <!-- Video Card 5 -->
+            <div class="col-md-6">
+                <div class="card" >
+                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/1fTb6746zoE?si=OPJKQABmP9l4jpop" height="300px"  allowfullscreen></iframe>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 2</h5>
+                    </div>
+                </div>
+            </div>
+  <!-- Video Card 6 -->
+            <div class="col-md-6">
+                <div class="card" >
+                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/1fTb6746zoE?si=OPJKQABmP9l4jpop" height="300px"  allowfullscreen></iframe>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 2</h5>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+
+   
+
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
