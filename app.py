@@ -142,6 +142,7 @@ def gallery():
       except Exception as e:
          db.session.rollback()
          return apology("An error occured", 500)
+         # return apology("An error occured", 500)
          # return f"an error occured {str(e)}"
 
 
@@ -231,7 +232,8 @@ def founders():
          db.session.commit()
       except Exception as e:
          db.session.rollback()
-         return f"an error occured {str(e)}"
+         return apology("An error occured", 500)
+         # return f"an error occured {str(e)}"
 
 
       flash("Founders Updated!")
@@ -296,7 +298,8 @@ def team_info():
          db.session.commit()
       except Exception as e:
          db.session.rollback()
-         return f"an error occured {str(e)}"
+         return apology("An error occured", 500)
+         # return f"an error occured {str(e)}"
 
 
       flash("Team members Updated!")
@@ -386,9 +389,9 @@ def blind():
 
       except Exception as e:
          db.session.rollback()
-         # return apology("An Error Occured", 500)
+         return apology("An Error Occured", 500)
          # Displaying detailed errors is not safe so remove the below line when ready to deploy
-         return f"An error occurred: {str(e)}"
+         # return f"An error occurred: {str(e)}"
 
       #Add data to excel
       rows = db.session.execute(text("SELECT * FROM blind")).fetchall()
