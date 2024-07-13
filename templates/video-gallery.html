@@ -1,0 +1,230 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Video Gallery
+{% endblock %}
+
+{% block main %}
+<style>
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: auto;
+    }
+
+    .card:hover {
+        transform: scale(1.05); /* Adjust the scale factor for zoom effect */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Adjust shadow properties for the glow effect */
+    }
+
+    .container {
+        font-family: Arial, Helvetica, sans-serif;
+        animation: colorChange 20s infinite;
+        transition: background-color 2s;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    @keyframes colorChange {
+        0% {
+            background-color: aliceblue;
+        }
+        20% {
+            background-color: #b0e0e6; /* PowderBlue */
+        }
+        40% {
+            background-color: #add8e6; /* LightBlue */
+        }
+        60% {
+            background-color: #87ceeb; /* SkyBlue */
+        }
+        80% {
+            background-color: #87cefa; /* LightSkyBlue */
+        }
+        100% {
+            background-color: aliceblue;
+        }
+    }
+
+    .col-md-6 {
+        padding: 20px;
+    }
+
+    .gallery-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: bold;
+        text-decoration: underline green;
+    }
+
+    .gallery-description {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .embedHeight {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+    }
+
+    .embedHeight iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+<div class="container mt-5">
+    <div class="gallery-title">
+        <h1>Our Video Gallery</h1>
+    </div>
+    <div class="gallery-description">
+        <p>Explore our past events through these video gallery.</p>
+    </div>
+    {% for i in range(0, videos|length, 2) %}
+        <div class="row">
+            {% for j in range(i, i+2) %}
+                {% if j < videos|length %}
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="embedHeight">
+                            {{ videos[j].iframe | safe }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ videos[j].video_title }} {% if session["admin"] %} [[{{ videos[j].id }}]] {% endif %} </h5>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Changing popper min js to a newer version -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+
+{% if session["admin"] %}
+  <!--Form-->
+  <script>
+    function validateForm() {
+        // Add validation logic here @DevMehta13
+        return true;
+    }
+
+    function toggleForms() {
+        const addForm = document.getElementById('addForm');
+        const editForm = document.getElementById('editForm');
+        const addRadio = document.getElementById('addRadio');
+        const editRadio = document.getElementById('editRadio');
+
+        if (addRadio.checked) {
+            addForm.style.display = 'block';
+            editForm.style.display = 'none';
+            enableFormFields(addForm);
+            disableFormFields(editForm);
+        } else if (editRadio.checked) {
+            addForm.style.display = 'none';
+            editForm.style.display = 'block';
+            enableFormFields(editForm);
+            disableFormFields(addForm);
+        }
+    }
+
+    function disableFormFields(form) {
+        const elements = form.querySelectorAll('input, textarea, select');
+        elements.forEach(element => {
+            element.disabled = true;
+        });
+    }
+
+    function enableFormFields(form) {
+        const elements = form.querySelectorAll('input, textarea, select');
+        elements.forEach(element => {
+            element.disabled = false;
+        });
+    }
+
+    window.onload = function() {
+        toggleForms();
+    };
+</script>
+<div class="container">
+    <h1>Admin Panel</h1>
+    <form action="/video-gallery" method="post" onsubmit="return validateForm()">
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="addRadio" name="formToggle" value="add" onclick="toggleForms()" checked>
+                <label class="form-check-label" for="addRadio">Add Event</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="editRadio" name="formToggle" value="edit" onclick="toggleForms()">
+                <label class="form-check-label" for="editRadio">Edit Event</label>
+            </div>
+        </div>
+    
+        <!-- Add Event Form -->
+        <div id="addForm" style="display: block;">
+            <input type="hidden" name="action" value="add">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label for="addEventName" class="form-label">Video Title<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="video_title" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Event name is required.
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label for="addEventName" class="form-label">Video Youtube URL<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="video_url" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Event name is required.
+                    </div>
+                </div>
+                <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Add</button>
+            </div>
+        </div>
+    
+        <!-- Edit Event Form -->
+        <div id="editForm" style="display: none;">
+            <input type="hidden" name="action" value="edit">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label for="editEventID" class="form-label">Video ID<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="number" name="video_id" class="form-control" id="editEventID" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Event ID is required.
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label for="editEventName" class="form-label">Video Title<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="video_title" class="form-control" id="editEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Event name is required.
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label for="addEventName" class="form-label">Video Youtube URL<span class="text-body-secondary"><em><small>(required)</small></em></span></label>
+                    <input type="text" name="video_url" class="form-control" id="addEventName" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                        Valid Event name is required.
+                    </div>
+                </div>
+                <button class="w-100 btn btn-lg" type="submit" style="color: white; background-color: #2f6e9c;">Edit</button>
+            </div>
+        </div>
+    </form>     
+</div>
+{% endif %}
+<!--Form End-->
+
+<!-- Removed bootstrap js cdn link -->
+{% endblock %}

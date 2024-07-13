@@ -1,4 +1,4 @@
-{% extends layout.html %}
+{% extends "layout.html" %}
 
 {% block title %}
     Admin Dashboard
@@ -8,19 +8,19 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="text-center">Admin Dashboard</h1>
+            <h2 class="text-center">Admin Dashboard</h2>
             <ul class="list-group mt-4">
                 <li class="list-group-item">
-                    <a href="/admin/page1" class="btn btn-link">Manage Page 1</a>
+                    <a href="/gallery" class="btn btn-link">Manage Photo Gallery</a>
                 </li>
                 <li class="list-group-item">
-                    <a href="/admin/page2" class="btn btn-link">Manage Page 2</a>
+                    <a href="/about#founders" class="btn btn-link">Manage Founders Section</a>
                 </li>
                 <li class="list-group-item">
-                    <a href="/admin/page3" class="btn btn-link">Manage Page 3</a>
+                    <a href="/about#ourteam" class="btn btn-link">Manage Our Team Section</a>
                 </li>
                 <li class="list-group-item">
-                    <a href="/admin/page4" class="btn btn-link">Manage Page 4</a>
+                    <a href="/video-gallery" class="btn btn-link">Manage Video Gallery</a>
                 </li>
                 <li class="list-group-item">
                     <a href="/admin/page5" class="btn btn-link">Manage Page 5</a>

@@ -1,7 +1,7 @@
 # cpanel testing2
 import os
 
-from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
+from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for, send_from_directory, abort
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -10,13 +10,17 @@ from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
-from helpers import apology,upload_to_excel
+from helpers import apology, upload_to_excel, admin_login_required, embed_link
 
 app = Flask(__name__)
 
 # Get the secret key from an environment variable
 app.config['SECRET_KEY'] = 'trial-secret-key-123'
 # app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+
+# Load admin credentials from environment variables - stored in cpanel
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'password')
 
 # Define the upload folder path within the static folder
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -137,7 +141,8 @@ def gallery():
          db.session.commit()
       except Exception as e:
          db.session.rollback()
-         return f"an error occured {str(e)}"
+         return apology("An error occured", 500)
+         # return f"an error occured {str(e)}"
 
 
       flash("Photo Gallery Updated!")
@@ -347,34 +352,8 @@ def blind():
       if len(mobile_number) != 10:
          return apology("Mobile number must be of 10 digits", 403)
       
-      # Secure the filename
-      # photo_filename_secure = secure_filename(photo.filename)
-
-      # Save the file to the upload folder
-    #   photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo_filename_secure))
-
-    #   # Construct the full URL for the uploaded file
-    #   photo_url = url_for('static', filename=f'uploads/{photo_filename_secure}', _external=True)
-
-    #   id_proof_filename_secure = secure_filename(id_proof.filename)
-
-    #   id_proof.save(os.path.join(app.config['UPLOAD_FOLDER'], id_proof_filename_secure))
-
-    #   id_proof_url = url_for('static', filename=f'uploads/{id_proof_filename_secure}', _external=True)
       photo_url = upload_get_secured(photo)  
       id_proof_url = upload_get_secured(id_proof)
-      # TODO: Test this code after hosting this online to ensure that the files are stored
-      # and also accessible by backend and ngo admin too 
-      # TODO: MAKE A FUNCTION TO STORE THESE FILES 
-      # TODO: Make a temporary funtion to store all files to test in local machine (as images may not be available through localhost link)
-      # TODO: Make a function to store all the files when the site is hosted 
-      
-      # file_path = os.path.join('uploads', id_proof.filename)
-      # id_proof.save(file_path)
-
-      # # Generate the URL
-      # id_proof_url = f"/uploads/{id_proof.filename}"
-      
       
       try:
          languages_str = ','.join(languages)  # Convert list to comma-separated string
@@ -414,10 +393,9 @@ def blind():
       #Add data to excel
       rows = db.session.execute(text("SELECT * FROM blind")).fetchall()
       modified_rows = [dict(row._mapping) for row in rows]
-      upload_to_excel("static/blind.xlsx", modified_rows,"blind")
+      upload_to_excel("static/uploads/secured/blind.xlsx", modified_rows,"blind")
 
       flash("Thank You for Submitting Form We Will Get Back to you Soon.")
-
       return redirect("/blind")
 
    else:
@@ -492,11 +470,6 @@ def book():
          flash("Invalid audio file type", "danger")
          return redirect(url_for("book"))
 
-    #   # Ensure upload directory exists
-    #   upload_directory = os.path.join(os.getcwd(), 'uploads')
-    #   if not os.path.exists(upload_directory):
-    #      os.makedirs(upload_directory)
-
       audio_url = upload_get_secured(audio)  
 
       try:
@@ -526,24 +499,21 @@ def book():
                }    
             )
          db.session.commit()
-         # flash("Form submitted successfully!", "success")
-         # return redirect(url_for("book"))
 
       except Exception as e:
          db.session.rollback()
-         # return apology("An Error Occured", 500)
+         return apology("An Error Occured", 500)
          # Displaying detailed errors is not safe so remove the below line when ready to deploy
-         flash(f"An error occurred: {str(e)}", "danger")
+         # flash(f"An error occurred: {str(e)}", "danger")
          # Do not redirect to book page so that the user does not have to fill the form again
-         return redirect(url_for("book"))
+         # return redirect(url_for("book"))
          
       #Add data to excel
       rows = db.session.execute(text("SELECT * FROM book")).fetchall()
       modified_rows = [dict(row._mapping) for row in rows]
-      upload_to_excel("static/book.xlsx", modified_rows,"book")
+      upload_to_excel("static/uploads/secured/book.xlsx", modified_rows,"book")
 
       flash("Thank You for Submitting Form We Will Get Back to you Soon.")
-
       return redirect(url_for("book"))
 
    else:
@@ -628,23 +598,6 @@ def team():
       if len(pan_number) != 10:
          return apology("Pan number must be of 10 characters", 403)
 
-    #   file_path = os.path.join('uploads', aadhar_card.filename)
-    #   aadhar_card.save(file_path)
-
-    #   # Generate the URL
-    #   aadhar_card_url = f"/uploads/{aadhar_card.filename}"
-
-    #   file_path = os.path.join('uploads', pan_card.filename)
-    #   pan_card.save(file_path)
-
-    #   # Generate the URL
-    #   pan_card_url = f"/uploads/{pan_card.filename}"
-
-    #   file_path = os.path.join('uploads', photo.filename)
-    #   photo.save(file_path)
-
-    #   # Generate the URL
-    #   photo_url = f"/uploads/{photo.filename}"
       aadhar_card_url = upload_get_secured(aadhar_card)  
       pan_card_url = upload_get_secured(pan_card)
       photo_url = upload_get_secured(photo)
@@ -684,17 +637,16 @@ def team():
 
       except Exception as e:
          db.session.rollback()
-         # return apology("An Error Occured", 500)
+         return apology("An Error Occured", 500)
          # Displaying detailed errors is not safe so remove the below line when ready to deploy
-         return f"An error occurred: {str(e)}"
+         # return f"An error occurred: {str(e)}"
 
       #Add data to excel
       rows = db.session.execute(text("SELECT * FROM team")).fetchall()
       modified_rows = [dict(row._mapping) for row in rows]
-      upload_to_excel("static/team.xlsx", modified_rows,"team")
+      upload_to_excel("static/uploads/secured/team.xlsx", modified_rows,"team")
 
       flash("Thank You for Submitting Form We Will Get Back to you Soon.")
-
       return redirect(url_for("team"))
 
    else:
@@ -706,6 +658,99 @@ def initiative():
    return render_template("initiative.html")
 
 
+@app.route("/video-gallery", methods=["GET", "POST"])
+def video_gallery():
+   if request.method == "POST":
+      action = request.form.get("action")
+      video_title = request.form.get("video_title")
+      video_url = request.form.get("video_url")
+
+      if not video_title:
+         return apology("Must provide Video Title", 403)
+      if not video_url:
+         return apology("Must provide Youtube URL", 403)
+
+      if video_url:
+         preview = embed_link(video_url)
+         if preview and 'preview' in preview and 'html' in preview['preview']:
+            iframe = preview['preview']['html']
+
+      data = {
+         "video_title": video_title,
+         "iframe": iframe
+      }
+
+      column_names = ', '.join(data.keys())
+      placeholders = ', '.join([f':{key}' for key in data.keys()])
+
+      if action == "add":
+         query = text(f"""
+            INSERT INTO video ({column_names})
+            VALUES ({placeholders})
+         """)
+
+      if action == "edit":
+         # Update operation
+         video_id = request.form.get("video_id")
+         if not video_id:
+            flash("Must provide video id", "danger")
+            return redirect(url_for("gallery"))
+         data["video_id"] = video_id
+         query = text(f"""
+            UPDATE video
+            SET {', '.join([f"{key} = :{key}" for key in data.keys() if key != "video_id"])}
+            WHERE id = :video_id
+         """)
+
+      try:
+         db.session.execute(query, data)
+         db.session.commit()
+      except Exception as e:
+         db.session.rollback()
+         return apology("An error occured", 500)      
+      
+      flash("Video Gallery Updated")
+      return redirect("/video-gallery")
+   
+   else:
+      rows = db.session.execute(
+         text(
+            """SELECT * FROM video ORDER BY id DESC"""
+         )
+      )
+      modified_rows = [dict(row._mapping) for row in rows]
+      return render_template("video-gallery.html", videos=modified_rows)
+
+
+@app.route("/admin-login", methods=["GET", "POST"])
+def admin_login():
+   if request.method == "POST":
+      username = request.form.get("username")
+      password = request.form.get("password")
+
+      if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+         session["admin"] = ADMIN_USERNAME  # Store admin username in session
+         return redirect(url_for("admin_dashboard"))
+      else:
+         return apology("INVALID CREDENTIALS !", 403)
+   else:
+      return render_template("admin-login.html")
+   
+
+@app.route("/admin-dashboard", methods=["GET"])
+@admin_login_required
+def admin_dashboard():
+   if request.method == "GET":
+      return render_template("admin-dashboard.html")
+
+
+@app.route("/logout")
+def logout():
+   """Log admin out"""
+   session.clear()
+   return redirect(url_for("admin_login"))
+
+
 @app.errorhandler(404)
 def page_not_found(e):
    return apology("Page Not Found", 404)
@@ -715,6 +760,18 @@ def page_not_found(e):
 def server_error(e):
    return apology("Internal Server Error", 500)
 
+
+# Secured images route
+@app.route("/static/uploads/secured/<filename>")
+@admin_login_required
+def secured_file(filename):
+    filename = secure_filename(filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'secured', filename)
+
+    if not os.path.isfile(file_path):
+        abort(404)  # Not Found
+
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'secured'), filename)
 
 
 # @app.route("/testing")
