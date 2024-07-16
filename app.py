@@ -15,8 +15,7 @@ from helpers import apology, upload_to_excel, admin_login_required, embed_link
 app = Flask(__name__)
 
 # Get the secret key from an environment variable
-app.config['SECRET_KEY'] = 'trial-secret-key-123'
-# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # Load admin credentials from environment variables - stored in cpanel
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
@@ -26,7 +25,9 @@ ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'password')
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ekprayas.db'
+DB_URL = os.getenv('DB_URL')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)   
 
