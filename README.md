@@ -1,759 +1,838 @@
-# Logistics Intelligence Platform
+# BDA Exam — Line-by-Line Walkthrough (Zero Background Edition)
 
-A **Last-Mile Logistics Control Tower** that combines real-time live operations with Big Data analytics. Think Uber's driver tracking meets Datadog's observability dashboards — built for monitoring, simulating, and analyzing delivery fleets across 10 Indian cities.
-
----
-
-## Table of Contents
-
-- [What This Project Does](#what-this-project-does)
-- [Architecture Overview](#architecture-overview)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [The Live Tracking Dashboard](#the-live-tracking-dashboard)
-- [The Analytics Dashboard](#the-analytics-dashboard)
-- [Backend Deep Dive](#backend-deep-dive)
-  - [Database Models](#database-models)
-  - [API Endpoints](#api-endpoints)
-  - [Real-Time Simulation Engine](#real-time-simulation-engine)
-  - [WebSocket Protocol](#websocket-protocol)
-- [Big Data Pipeline](#big-data-pipeline)
-  - [HDFS Export](#1-hdfs-export)
-  - [MapReduce Cleaning](#2-mapreduce-cleaning)
-  - [PySpark Analytics](#3-pyspark-analytics-4-jobs)
-- [Docker Infrastructure](#docker-infrastructure)
-- [Frontend Deep Dive](#frontend-deep-dive)
-  - [Pages & Routing](#pages--routing)
-  - [Components](#components)
-  - [WebSocket Client](#websocket-client)
-  - [API Client](#api-client)
-- [Supported Cities](#supported-cities)
-- [Running Tests](#running-tests)
-- [Commands Reference](#commands-reference)
+> Read this file like a textbook. Every code line is explained. By the end you will know what each piece does and **why** it's there. Open this side-by-side with your Jupyter notebook.
 
 ---
 
-## What This Project Does
+# PART A — Tiny Python Concepts You'll See Everywhere
 
-This platform simulates and monitors a last-mile delivery fleet in real time. Here is the complete flow:
+Before touching PySpark, just 6 things to know. They show up in every line of code below.
 
-1. **Seed**: On startup, the system seeds a SQLite database with 3 delivery zones, 15 drivers, and 500 orders for a selected Indian city.
-2. **Simulate**: A background loop moves drivers along real road routes (fetched from OSRM) every 3 seconds. Drivers pick up orders, deliver them, and get reassigned.
-3. **Broadcast**: Every tick, all 15 driver positions (with risk scores, ETAs, SLA deadlines) are broadcast over WebSocket to connected frontends.
-4. **Visualize**: A Next.js dashboard shows drivers moving on an OpenStreetMap, with route overlays, zone heatmaps, risk escalation toasts, and live KPI stats.
-5. **Analyze**: Completed orders can be exported to HDFS, cleaned via a MapReduce pipeline, and processed by 4 PySpark jobs to generate zone analytics, driver rankings, delay-risk predictions, and route efficiency scores.
-6. **Dashboard**: An analytics page visualizes Spark results with bar charts, line charts, driver rankings, and smart risk alerts.
+## A.1 — A list
 
----
-
-## Architecture Overview
-
-```
-                        ┌──────────────────────────────┐
-                        │     Next.js Frontend         │
-                        │     (localhost:3000)          │
-                        │                              │
-                        │  / ─ Live Tracking Dashboard  │
-                        │  /analytics ─ Big Data Page   │
-                        └──────────┬───────────────────┘
-                                   │
-                          REST + WebSocket
-                                   │
-                        ┌──────────▼───────────────────┐
-                        │     FastAPI Backend           │
-                        │     (localhost:8000)          │
-                        │                              │
-                        │  Routers: orders, drivers,    │
-                        │  zones, websocket, pipeline,  │
-                        │  analytics, cities            │
-                        │                              │
-                        │  Services: simulation,        │
-                        │  routing (OSRM), hdfs_export  │
-                        │                              │
-                        │  Database: SQLite             │
-                        │  (logistics.db)               │
-                        └───┬──────────┬───────────────┘
-                            │          │
-                  ┌─────────▼──┐   ┌───▼───────────────┐
-                  │   OSRM     │   │  Docker Cluster    │
-                  │  (Public   │   │                    │
-                  │   API)     │   │  HDFS (NameNode +  │
-                  │            │   │       DataNode)    │
-                  └────────────┘   │  YARN (RM + NM)   │
-                                   │  MapReduce History │
-                                   │  Spark Master +    │
-                                   │       Worker       │
-                                   └────────────────────┘
+```python
+nums = [10, 20, 30, 40, 50]
 ```
 
-**Data Pipeline Flow:**
-```
-SQLite ──export──▶ HDFS /raw/ ──MapReduce──▶ HDFS /cleaned/ ──Spark──▶ HDFS /results/
-                                                                            │
-                                                    FastAPI reads ◀─────────┘
-                                                         │
-                                                    Frontend renders
-```
+A list = an ordered collection. **Index starts at 0**, not 1:
 
----
-
-## Tech Stack
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Frontend | Next.js 16, React 19, TypeScript | App framework, UI |
-| Styling | Tailwind CSS 4 | Dark-mode enterprise UI |
-| Maps | React-Leaflet 5 + OpenStreetMap | Interactive map with driver markers |
-| Charts | Recharts 3 | Bar charts, line charts on analytics page |
-| Backend | FastAPI, Uvicorn | REST API + WebSocket server |
-| Database | SQLite + SQLAlchemy | Orders, drivers, zones, daily snapshots |
-| Real-time | WebSockets | Live driver position broadcast every 3s |
-| Routing | OSRM (public API) | Real road-following routes for drivers |
-| Big Data | Apache Hadoop 3 (HDFS + YARN) | Distributed storage and job scheduling |
-| Processing | MapReduce (Python streaming) | Data validation and cleaning |
-| Analytics | Apache Spark 3.5 (PySpark) | 4 analytical jobs on delivery data |
-| Infrastructure | Docker Compose | 7-container Hadoop/Spark cluster |
-
----
-
-## Project Structure
-
-```
-bdashit/
-├── CLAUDE.md                        # AI assistant directives
-├── README.md                        # This file
-├── me.cpp                           # Placeholder
-│
-├── backend/
-│   ├── requirements.txt             # Python dependencies
-│   ├── pytest.ini                   # Test config
-│   ├── logistics.db                 # SQLite database (auto-generated)
-│   │
-│   ├── app/
-│   │   ├── main.py                  # FastAPI app entry point, lifespan, city endpoints
-│   │   ├── database.py              # SQLAlchemy engine + session factory
-│   │   ├── models.py                # ORM models: Zone, Driver, Order, DailySnapshot
-│   │   ├── schemas.py               # Pydantic response models
-│   │   ├── cities.py                # Config for 10 Indian cities (zones, coords)
-│   │   ├── seed.py                  # Database seeder (zones, drivers, orders, snapshots)
-│   │   │
-│   │   ├── routers/
-│   │   │   ├── orders.py            # Order CRUD + live stats + route lookup
-│   │   │   ├── drivers.py           # Driver listing
-│   │   │   ├── zones.py             # Zone listing + heatmap data
-│   │   │   ├── websocket.py         # WebSocket server + broadcast
-│   │   │   ├── pipeline.py          # HDFS export + MapReduce execution
-│   │   │   └── analytics.py         # Spark job submission + result reading
-│   │   │
-│   │   └── services/
-│   │       ├── simulation.py        # Driver movement engine (core loop)
-│   │       ├── routing.py           # OSRM route fetching + caching
-│   │       └── hdfs_export.py       # SQLite → HDFS CSV export
-│   │
-│   ├── mapreduce/
-│   │   ├── mapper.py                # Hadoop streaming mapper (validation)
-│   │   └── reducer.py               # Hadoop streaming reducer (aggregation)
-│   │
-│   ├── spark_jobs/
-│   │   ├── zone_analytics.py        # Zone-level delivery metrics
-│   │   ├── driver_utilization.py    # Per-driver performance scoring
-│   │   ├── route_efficiency.py      # Zone-driver route quality
-│   │   └── delay_prediction.py      # Delay risk scoring by zone + hour
-│   │
-│   └── tests/
-│       └── test_api.py              # 11 tests (API + WebSocket + simulation)
-│
-├── frontend/
-│   ├── package.json                 # Next.js 16, React 19, Leaflet, Recharts
-│   ├── next.config.ts               # API proxy rewrite to backend
-│   ├── tsconfig.json                # TypeScript config
-│   ├── postcss.config.mjs           # Tailwind PostCSS plugin
-│   │
-│   └── src/
-│       ├── app/
-│       │   ├── layout.tsx           # Root layout (dark theme, fonts)
-│       │   ├── globals.css          # Tailwind + custom animations
-│       │   ├── page.tsx             # Home: Live Tracking Dashboard
-│       │   │
-│       │   ├── analytics/
-│       │   │   └── page.tsx         # Analytics: Big Data Dashboard
-│       │   │
-│       │   └── components/
-│       │       ├── MapView.tsx           # Leaflet map container
-│       │       ├── DriverMarker.tsx      # Animated driver icons
-│       │       ├── DestinationMarkers.tsx # Delivery destination circles
-│       │       ├── RouteOverlay.tsx       # Route polyline (completed/remaining)
-│       │       ├── ZoneHeatmapLayer.tsx   # Zone load visualization
-│       │       ├── MapLegend.tsx          # Map legend (risk colors)
-│       │       ├── OrderSidebar.tsx       # Fleet status sidebar
-│       │       ├── LiveStatsBar.tsx       # KPI metrics bar
-│       │       ├── LiveToasts.tsx         # Risk escalation notifications
-│       │       ├── ZoneDelayChart.tsx     # Recharts bar chart
-│       │       ├── DriverRankings.tsx     # Top/bottom 5 drivers
-│       │       ├── SmartAlerts.tsx        # Risk alert cards
-│       │       └── HistoricalComparison.tsx # Week-over-week line chart
-│       │
-│       └── lib/
-│           ├── api.ts               # REST API client + TypeScript interfaces
-│           └── websocket.ts         # WebSocket singleton + pub-sub
-│
-├── docker/
-│   ├── docker-compose.yml           # 7-service Hadoop/Spark cluster
-│   ├── hadoop/
-│   │   ├── core-site.xml            # HDFS default FS config
-│   │   ├── hdfs-site.xml            # Replication, data dirs
-│   │   ├── mapred-site.xml          # YARN framework, history server
-│   │   ├── yarn-site.xml            # Resource limits (2GB, 2 cores)
-│   │   └── hadoop.env               # Environment variables
-│   └── spark/
-│       └── spark-defaults.conf      # Spark master, memory, HDFS integration
-│
-└── docs/
-    ├── PLAN.md                      # 6-phase implementation roadmap
-    └── v2.md                        # V2 feature enhancements plan
+```python
+nums[0]  # 10
+nums[1]  # 20
+nums[4]  # 50
 ```
 
----
+## A.2 — A tuple (just a list with parentheses)
 
-## Getting Started
-
-### Prerequisites
-
-- **Node.js** (v18+)
-- **Python** (3.10+)
-- **Docker** and **Docker Compose**
-
-### 1. Start the Hadoop/Spark cluster
-
-```bash
-cd docker
-docker compose up -d
+```python
+pair = ("Mumbai", 200)
+pair[0]  # "Mumbai"
+pair[1]  # 200
 ```
 
-This spins up 7 containers: NameNode, DataNode, ResourceManager, NodeManager, HistoryServer, Spark Master, Spark Worker. Wait for health checks to pass (~30s).
+A `(key, value)` tuple is the bread and butter of `reduceByKey`.
 
-**Verify:**
-- HDFS Web UI: http://localhost:9870
-- YARN Web UI: http://localhost:8088
-- Spark Master UI: http://localhost:8080
+## A.3 — A dictionary
 
-### 2. Start the Backend
-
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+```python
+totals = {"Mumbai": 360, "Delhi": 260}
+totals["Mumbai"]  # 360
 ```
 
-On startup, the backend:
-- Creates SQLite tables
-- Seeds 3 zones, 15 drivers, 500 orders for Delhi (default city)
-- Starts the background simulation loop (moves drivers every 3s)
-- Prefetches OSRM routes for active deliveries
+Like a list, but you look things up by name (called the "key") instead of by position.
 
-**API available at:** http://localhost:8000  
-**API docs (Swagger):** http://localhost:8000/docs
+## A.4 — `lambda` = a tiny function in one line
 
-### 3. Start the Frontend
+These two are the same thing:
 
-```bash
-cd frontend
-npm install
-npm run dev
+```python
+def double(x):
+    return x * 2
+
+double = lambda x: x * 2     # exact same function, just shorter
 ```
 
-**Dashboard available at:** http://localhost:3000
+So whenever you see `lambda x: x * 2`, read it as "a function that takes `x` and returns `x * 2`."
 
----
+In PySpark you'll write tons of these:
 
-## The Live Tracking Dashboard
-
-**Route:** `/` (home page)
-
-This is the main operational view. Here is everything it shows:
-
-### Header Bar
-- **Logo** and app title
-- **City Selector**: Dropdown to switch between 10 Indian cities. Switching re-seeds the entire database with city-specific coordinates.
-- **Search**: Type a tracking number to find a driver on the map. The map flies to the driver and highlights them in the sidebar.
-- **Status Badges**: Live count of drivers by risk — green (on track), yellow (SLA < 20min), red (SLA < 10min), gray (idle).
-- **Heatmap Toggle**: Shows/hides zone load overlay on the map.
-- **LIVE Indicator**: Green dot when WebSocket is connected.
-- **Analytics Link**: Navigate to the analytics page.
-
-### Live Stats Bar
-Five KPI metrics refreshed every 10 seconds:
-- **Delivered Today**: Orders delivered since midnight
-- **Avg Delay**: Average delay in minutes
-- **Success Rate**: Percentage of on-time deliveries
-- **Active**: In-transit orders
-- **Pending**: Waiting for assignment
-
-### Map (Left Side)
-- **OpenStreetMap** tiles via React-Leaflet
-- **Driver Markers**: Colored circles with driver initials. Colors = risk level (green/yellow/red). Idle drivers are faded. Markers animate smoothly between positions (2.5s transition). Clicking a marker shows a popup with driver name, status, tracking number, zone, risk, ETA, and SLA deadline.
-- **Destination Markers**: Red dashed circles at delivery locations for active drivers.
-- **Route Overlay** (on driver click): A polyline showing the driver's route — gray dashed line for completed portion, solid blue for remaining. Green circle at pickup, red circle at delivery.
-- **Zone Heatmap** (toggleable): Colored circles over each zone center. Green = low load, yellow = moderate, red = overloaded. Tooltip shows active orders, pending orders, available drivers, and load ratio.
-- **Legend**: Bottom-left corner explaining all marker types.
-
-### Fleet Sidebar (Right Side)
-- Lists all 15 drivers sorted by risk (red first, then yellow, green, idle last)
-- Each card shows: driver name, status badge, risk dot, tracking number, zone, SLA deadline, ETA
-- Late ETAs shown in red, on-time in blue
-- Clicking a driver selects them and fetches their route
-- Search highlight pulses with a blue animation
-
-### Risk Escalation Toasts
-- When a driver's risk level worsens (green → yellow, or anything → red), a toast notification slides in from the bottom-right
-- Shows driver name, tracking number, and risk change (e.g., "green → red")
-- Auto-dismisses after 5 seconds
-
----
-
-## The Analytics Dashboard
-
-**Route:** `/analytics`
-
-This page runs the full big data pipeline and visualizes results.
-
-### Pipeline Execution
-A single "Run Full Pipeline" button triggers this sequence:
-1. **Export to HDFS** — Writes completed/delayed orders from SQLite to CSV on HDFS (`/logistics/raw/delivery_logs_YYYYMMDD.csv`)
-2. **Run MapReduce** — Validates and cleans the data (mapper validates coords, driver IDs, delay values; reducer aggregates by zone). Output: `/logistics/cleaned/run_YYYYMMDD/part-00000`
-3. **Run 4 Spark Jobs** — Submits each PySpark job to the Spark cluster:
-   - `zone_analytics`
-   - `driver_utilization`
-   - `route_efficiency`
-   - `delay_prediction`
-4. **Refresh Dashboard** — Reads Spark results from HDFS and renders charts
-
-### Visualizations
-
-**Summary Cards** (top row):
-- Total Deliveries, Average Delay, Zones Tracked, High-Risk Slots
-
-**Zone Delay Chart** (Recharts bar chart):
-- Total delay minutes per zone (A, B, C)
-- Below: per-zone cards with delivery count, avg delay, delivery rate
-
-**Smart Alerts** (risk predictions):
-- Shows HIGH and MEDIUM risk slots by zone + hour
-- Badge counts for each risk level
-- Each alert: zone, hour (e.g., "2 PM"), delivery count, avg/max delay, delayed count
-
-**Driver Rankings** (two-column layout):
-- **Top 5 Performers**: Highest on-time percentage, with progress bars
-- **Bottom 5 Performers**: Lowest on-time percentage, with avg delay shown
-- Each entry: driver ID, on-time %, total deliveries, primary zone, rate
-
-**Historical Comparison** (Recharts line chart):
-- Compares current 7-day period vs previous 7-day period
-- Toggle between "Avg Delay" and "Total Deliveries" metrics
-- Optional zone filter dropdown
-- Data comes from DailySnapshot table (SQLite), not HDFS — always available even before pipeline runs
-
----
-
-## Backend Deep Dive
-
-### Database Models
-
-**Zone** — Delivery zones within a city
-| Column | Type | Description |
-|--------|------|-------------|
-| id | Integer PK | Auto-increment |
-| name | String (unique) | "A", "B", or "C" |
-| center_lat / center_lng | Float | Zone center coordinates |
-| radius_km | Float | Zone radius in kilometers |
-
-**Driver** — Delivery drivers
-| Column | Type | Description |
-|--------|------|-------------|
-| id | Integer PK | Auto-increment |
-| name | String | Driver's name |
-| current_lat / current_lng | Float | Live GPS position |
-| status | String | "idle", "en_route", or "delivering" |
-| assigned_zone_id | FK → Zone | Which zone the driver operates in |
-
-**Order** — Delivery orders
-| Column | Type | Description |
-|--------|------|-------------|
-| id | Integer PK | Auto-increment |
-| tracking_number | String (unique) | e.g., "TRK-000001" |
-| pickup_lat / pickup_lng | Float | Pickup coordinates |
-| delivery_lat / delivery_lng | Float | Delivery coordinates |
-| zone_name | FK → Zone.name | Which zone this order belongs to |
-| status | String | "pending", "in_transit", "delivered", "delayed" |
-| driver_id | FK → Driver | Assigned driver (nullable) |
-| created_at | DateTime | Order creation time |
-| delivered_at | DateTime | Delivery completion time (nullable) |
-| sla_deadline | DateTime | When the delivery must be completed by |
-| delay_minutes | Integer | How many minutes late (0 if on-time) |
-
-**DailySnapshot** — Historical daily aggregates
-| Column | Type | Description |
-|--------|------|-------------|
-| id | Integer PK | Auto-increment |
-| snapshot_date | Date | Which day |
-| zone_name | String | Which zone |
-| total_deliveries | Integer | Deliveries completed that day |
-| total_delayed | Integer | How many were late |
-| avg_delay_minutes | Float | Average delay |
-| on_time_pct | Float | On-time delivery percentage |
-
-### API Endpoints
-
-#### Cities
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/cities` | List all 10 supported cities |
-| GET | `/api/cities/current` | Detect currently active city |
-| POST | `/api/cities/{city_key}` | Switch city (re-seeds database) |
-
-#### Orders
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/orders?limit=20&offset=0` | List orders with pagination |
-| GET | `/api/orders/{order_id}` | Get single order details |
-| GET | `/api/orders/{order_id}/route` | Get active route waypoints |
-| GET | `/api/orders/stats/live` | Live KPI stats (delivered today, avg delay, success rate, active, pending) |
-
-#### Drivers
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/drivers` | List all 15 drivers |
-
-#### Zones
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/zones` | List all 3 zones |
-| GET | `/api/zones/heatmap` | Zone load data (active orders, pending, available drivers, load ratio, intensity color) |
-
-#### Pipeline (Big Data)
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/export-to-hdfs` | Export orders from SQLite to HDFS CSV |
-| POST | `/api/run-mapreduce` | Run mapper → sort → reducer on HDFS data |
-
-#### Analytics (Spark Results)
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/run-spark/{job_name}` | Submit a PySpark job (zone_analytics, driver_utilization, route_efficiency, delay_prediction) |
-| GET | `/api/analytics/zones` | Read zone analytics results |
-| GET | `/api/analytics/drivers` | Read driver utilization results |
-| GET | `/api/analytics/routes` | Read route efficiency results |
-| GET | `/api/analytics/delay-risk` | Read delay prediction results |
-| GET | `/api/analytics/historical?days=7&zone=A` | Historical comparison (current vs previous period) |
-
-#### Health
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/health` | Health check |
-
-#### WebSocket
-| Path | Description |
-|------|-------------|
-| `ws://localhost:8000/ws/tracking` | Real-time driver position stream |
-
-### Real-Time Simulation Engine
-
-The simulation engine (`backend/app/services/simulation.py`) is the heart of the live operations. Here is how it works:
-
-**Startup:**
-1. On app startup, `prefetch_all_routes()` fetches OSRM road routes for up to 15 active orders (one per driver). Remaining orders get straight-line fallback routes.
-2. The `simulation_loop()` coroutine starts and runs indefinitely.
-
-**Every 3 Seconds (`_step_drivers`):**
-1. Query all `in_transit` orders with their assigned drivers
-2. For each order:
-   - Get or lazy-fetch the OSRM route
-   - Advance the driver to the next waypoint along the route
-   - Update the driver's lat/lng in the database
-   - If the driver reached the final waypoint:
-     - Mark order as `delivered`, set `delivered_at` timestamp
-     - Check if the order missed its SLA deadline; if so, set status to `delayed` and compute `delay_minutes`
-     - Find the next `pending` order in the same zone
-     - If found: assign it to the driver, set driver to `en_route`, fetch the new route
-     - If none: set driver to `idle`
-3. Collect ALL 15 driver payloads (active + idle) to maintain stable count
-4. Broadcast via WebSocket to all connected clients
-
-**Risk Scoring (`_compute_risk`):**
-- Calculates distance from driver to delivery using Haversine formula
-- Compares remaining distance vs time until SLA deadline
-- **Red**: distance > 2km AND time remaining < 10 minutes
-- **Yellow**: distance > 1km AND time remaining < 20 minutes
-- **Green**: everything else
-
-**Route Caching:**
-- OSRM routes are cached in `_route_cache` (dict keyed by order_id)
-- Cache is cleared on city switch
-- Fallback: if OSRM is unavailable, a straight line with 10 interpolated points is used
-
-### WebSocket Protocol
-
-**Connection:** `ws://localhost:8000/ws/tracking`
-
-**Message format:** JSON array of driver update objects, broadcast every 3 seconds:
-
-```json
-[
-  {
-    "driver_id": 1,
-    "driver_name": "Rahul Sharma",
-    "lat": 28.6139,
-    "lng": 77.2090,
-    "status": "en_route",
-    "risk": "green",
-    "order_id": 42,
-    "tracking_number": "TRK-000042",
-    "delivery_lat": 28.6200,
-    "delivery_lng": 77.2150,
-    "zone": "A",
-    "sla_deadline": "2026-04-01T15:30:00",
-    "eta_minutes": 12.5,
-    "eta_time": "2026-04-01T15:22:30"
-  },
-  ...
-]
+```python
+lambda line: line.split(",")[4]    # "given a line, give me back position 4 after splitting by comma"
+lambda a, b: a + b                  # "given two values, give me their sum"
+lambda kv: kv[1]                    # "given a (key, value) tuple, give me the value"
 ```
 
-**Frontend behavior:**
-- Singleton WebSocket with auto-reconnect (3 second delay)
-- Pub-sub pattern: components subscribe to updates, unsubscribe on unmount
-- Auto-connects on first subscriber, closes when last subscriber leaves
+## A.5 — `.split(",")` = chop a string into a list
 
----
+```python
+line = "1,D1,10,200,Mumbai"
+parts = line.split(",")
+# parts = ["1", "D1", "10", "200", "Mumbai"]
 
-## Big Data Pipeline
-
-The pipeline processes delivery data in 3 stages: Export → Clean → Analyze.
-
-### 1. HDFS Export
-
-**Trigger:** `POST /api/export-to-hdfs`
-
-**What it does:**
-- Queries all `delivered` and `delayed` orders from SQLite
-- Builds a CSV with columns: `Timestamp, DriverID, Zone, Lat, Lng, Status, DelayTime`
-- Pipes the CSV into the namenode Docker container via `docker exec`
-- Uploads to HDFS at `/logistics/raw/delivery_logs_YYYYMMDD.csv`
-
-### 2. MapReduce Cleaning
-
-**Trigger:** `POST /api/run-mapreduce`
-
-**Mapper** (`backend/mapreduce/mapper.py`):
-- Reads CSV lines from stdin
-- Validates each row:
-  - Skips header
-  - Drops rows with null/empty DriverID
-  - Drops rows with coordinates outside India (8-37N, 68-98E)
-  - Drops rows with negative delay times
-  - Reports validation counters to stderr
-- Emits: `Zone\tDriverID,Lat,Lng,Status,DelayTime,Timestamp`
-
-**Reducer** (`backend/mapreduce/reducer.py`):
-- Receives mapper output sorted by zone
-- Groups records by zone
-- Counts deliveries, sums delay, flags anomalies (delay > 60 min)
-- Emits cleaned CSV to stdout
-- Emits zone summaries to stderr: `#SUMMARY|Zone|count=N|total_delay=M|anomalies=K`
-
-**Pipeline command:**
-```
-hdfs dfs -cat /input.csv | python mapper.py | sort | python reducer.py > /output/part-00000
+parts[0]   # "1"      ← ride_id
+parts[1]   # "D1"     ← driver_id
+parts[2]   # "10"     ← distance
+parts[3]   # "200"    ← fare
+parts[4]   # "Mumbai" ← city
 ```
 
-**Output:** `/logistics/cleaned/run_YYYYMMDD/part-00000`
+> ⚠️ Everything from `.split(",")` is a **string**. `"200"` is text, not a number. To do math, you must wrap it: `float("200")` → `200.0`.
 
-### 3. PySpark Analytics (4 Jobs)
+## A.6 — `for ... in ...` = loop
 
-All jobs read from the cleaned data and write JSON results to HDFS.
-
-#### Zone Analytics (`spark_jobs/zone_analytics.py`)
-- **Input:** Cleaned CSV
-- **Output:** `/logistics/results/zone_analytics`
-- **Metrics per zone:**
-  - total_deliveries, avg_delay_min, total_delay_min, delayed_count
-  - peak_hour (hour with most deliveries)
-  - peak_hour_deliveries, overloaded_hours (hours with >10 deliveries)
-
-#### Driver Utilization (`spark_jobs/driver_utilization.py`)
-- **Input:** Cleaned CSV
-- **Output:** `/logistics/results/driver_utilization`
-- **Metrics per driver:**
-  - total_deliveries, avg_delay_min, total_delay_min
-  - delivered_count, delayed_count
-  - primary_zone, deliveries_per_hour, on_time_pct
-
-#### Route Efficiency (`spark_jobs/route_efficiency.py`)
-- **Input:** Cleaned CSV
-- **Output:** `/logistics/results/route_efficiency`
-- **Metrics per zone + driver combination:**
-  - deliveries, avg_delay_min, max_delay_min
-  - avg_lat, avg_lng (route center)
-  - efficiency_score = `(1 - avg_delay/max_delay) * 100`
-
-#### Delay Prediction (`spark_jobs/delay_prediction.py`)
-- **Input:** Cleaned CSV
-- **Output:** `/logistics/results/delay_prediction`
-- **Metrics per zone + hour:**
-  - delivery_count, avg_delay_min, max_delay_min, delayed_count
-  - risk_level: HIGH (>10 deliveries AND avg delay >15min), MEDIUM (avg delay >10 OR >8 deliveries), LOW
-  - risk_score: 3 (HIGH), 2 (MEDIUM), 1 (LOW)
-
----
-
-## Docker Infrastructure
-
-The `docker/docker-compose.yml` defines a 7-service cluster on a `logistics-net` bridge network:
-
-| Service | Image | Ports | Purpose |
-|---------|-------|-------|---------|
-| namenode | apache/hadoop:3 | 9870, 8020 | HDFS NameNode (metadata + coordination) |
-| datanode | apache/hadoop:3 | 9864 | HDFS DataNode (actual data storage) |
-| resourcemanager | apache/hadoop:3 | 8088 | YARN ResourceManager (job scheduling) |
-| nodemanager | apache/hadoop:3 | 8042 | YARN NodeManager (container execution) |
-| historyserver | apache/hadoop:3 | 19888 | MapReduce Job History |
-| spark-master | apache/spark:3.5.8-python3 | 8080, 7077 | Spark Master (cluster coordinator) |
-| spark-worker | apache/spark:3.5.8-python3 | 8081 | Spark Worker (2 cores, 1GB memory) |
-
-**Key configs:**
-- HDFS replication factor: 1 (single datanode for dev)
-- YARN resources: 2048MB memory, 2 vCores
-- Spark driver/executor memory: 512MB each
-- All services mount `mapreduce/` and `spark_jobs/` from the host for live code iteration
-
-**Web UIs:**
-- HDFS: http://localhost:9870
-- YARN: http://localhost:8088
-- Spark: http://localhost:8080
-- History: http://localhost:19888
-
----
-
-## Frontend Deep Dive
-
-### Pages & Routing
-
-| Route | File | Description |
-|-------|------|-------------|
-| `/` | `src/app/page.tsx` | Live Tracking Dashboard — map, sidebar, stats, toasts |
-| `/analytics` | `src/app/analytics/page.tsx` | Analytics Dashboard — pipeline, charts, rankings, alerts |
-
-The Next.js config proxies all `/api/*` requests to the backend at `http://127.0.0.1:8000`.
-
-### Components
-
-| Component | File | What It Renders |
-|-----------|------|-----------------|
-| **MapView** | `components/MapView.tsx` | Leaflet map container with OpenStreetMap tiles, manages all map sub-layers |
-| **DriverMarker** | `components/DriverMarker.tsx` | Individual driver marker with colored circle (initials), popup, smooth 2.5s position animation. Teleports (>500m jumps) snap instantly. |
-| **DestinationMarkers** | `components/DestinationMarkers.tsx` | Red dashed circles at delivery locations for active drivers |
-| **RouteOverlay** | `components/RouteOverlay.tsx` | Route polyline: gray dashed (completed) + solid blue (remaining). Green pickup circle, red delivery circle. |
-| **ZoneHeatmapLayer** | `components/ZoneHeatmapLayer.tsx` | Colored circles over zone centers showing load intensity (green/yellow/red). Sticky tooltip with metrics. |
-| **MapLegend** | `components/MapLegend.tsx` | Fixed bottom-left legend explaining marker colors and types |
-| **OrderSidebar** | `components/OrderSidebar.tsx` | Scrollable driver list sorted by risk. Cards show name, status, tracking number, zone, SLA, ETA. |
-| **LiveStatsBar** | `components/LiveStatsBar.tsx` | Horizontal KPI bar: deliveries today, avg delay, success rate, active, pending |
-| **LiveToasts** | `components/LiveToasts.tsx` | Bottom-right toast notifications for risk escalations (green→yellow, *→red). Auto-dismiss 5s. |
-| **ZoneDelayChart** | `components/ZoneDelayChart.tsx` | Recharts bar chart: total delay minutes per zone + per-zone summary cards |
-| **DriverRankings** | `components/DriverRankings.tsx` | Two-column layout: top 5 and bottom 5 drivers by on-time percentage |
-| **SmartAlerts** | `components/SmartAlerts.tsx` | HIGH/MEDIUM risk alert cards by zone + hour, sorted by severity |
-| **HistoricalComparison** | `components/HistoricalComparison.tsx` | Recharts line chart comparing current week vs last week. Zone filter + metric toggle. |
-
-### WebSocket Client
-
-`src/lib/websocket.ts` — Singleton WebSocket connection manager.
-
-- Connects to `ws://localhost:8000/ws/tracking`
-- **Pub-sub pattern**: Call `subscribe(callback)` to receive driver updates, returns an unsubscribe function
-- **Auto-reconnect**: Reconnects 3 seconds after disconnect
-- **Lifecycle**: Connects on first subscriber, closes when no subscribers remain
-
-### API Client
-
-`src/lib/api.ts` — TypeScript fetch wrappers for all backend endpoints.
-
-**Key interfaces:**
-- `DriverUpdate` — Full driver state from WebSocket (id, name, lat, lng, status, risk, order_id, tracking_number, delivery coords, zone, SLA, ETA)
-- `CityInfo` — City metadata (key, name, center, zoom)
-- `RouteData` — Route waypoints with current progress index
-- `ZoneHeatmapData` — Zone load metrics and intensity color
-- `LiveStats` — Real-time KPI values
-- `HistoricalData` — Current period vs previous period arrays
-
----
-
-## Supported Cities
-
-The platform supports 10 Indian cities, each with 3 pre-configured delivery zones:
-
-| Key | City | Zones |
-|-----|------|-------|
-| delhi | Delhi | Connaught Place, Karol Bagh, Lajpat Nagar |
-| mumbai | Mumbai | Andheri, Bandra, Dadar |
-| bangalore | Bangalore | Koramangala, Whitefield, Indiranagar |
-| hyderabad | Hyderabad | Banjara Hills, Madhapur, Secunderabad |
-| chennai | Chennai | T. Nagar, Adyar, Anna Nagar |
-| kolkata | Kolkata | Park Street, Salt Lake, Howrah |
-| pune | Pune | Koregaon Park, Hinjewadi, Kothrud |
-| ahmedabad | Ahmedabad | Navrangpura, SG Highway, Maninagar |
-| jaipur | Jaipur | MI Road, Malviya Nagar, Vaishali Nagar |
-| lucknow | Lucknow | Hazratganj, Gomti Nagar, Aminabad |
-
-Each city seeds: **3 zones**, **15 drivers** (5 per zone), **500 orders**, and **14 days of daily snapshots**.
-
----
-
-## Running Tests
-
-```bash
-cd backend
-source venv/bin/activate
-pytest
+```python
+for city, total in [("Mumbai", 360), ("Delhi", 260)]:
+    print(city, total)
+# Mumbai 360
+# Delhi 260
 ```
 
-The test suite (`backend/tests/test_api.py`) covers 11 tests:
-
-| Test | What It Validates |
-|------|-------------------|
-| `test_health` | `/api/health` returns 200 |
-| `test_list_orders` | Orders endpoint returns data with correct pagination |
-| `test_list_orders_pagination` | Offset-based pagination works |
-| `test_get_order` | Single order retrieval |
-| `test_get_order_not_found` | Returns 404 for missing orders |
-| `test_list_drivers` | Returns exactly 15 drivers |
-| `test_list_zones` | Returns exactly 3 zones (A, B, C) |
-| `test_websocket_connects` | WebSocket accepts connections |
-| `test_simulation_step_produces_payloads` | Simulation generates correct payload structure |
-| `test_simulation_positions_change` | Driver positions actually update between ticks |
-| `test_simulation_risk_field` | Risk field is present and valid (green/yellow/red) |
+When you loop over (key, value) tuples, Python lets you "unpack" them into two variables at once: `for city, total in ...`.
 
 ---
 
-## Commands Reference
+# PART B — PySpark Concepts in 60 Seconds
 
-| Command | What It Does |
-|---------|--------------|
-| `npm run dev` | Start the frontend (http://localhost:3000) |
-| `uvicorn app.main:app --reload` | Start the backend (http://localhost:8000) |
-| `pytest` | Run the backend test suite |
-| `cd docker && docker compose up -d` | Start the Hadoop/Spark cluster |
-| `cd docker && docker compose down` | Stop the cluster |
-| `cd docker && docker compose down -v` | Stop and remove all data volumes |
+## B.1 — What is Spark?
+
+A library for processing data **in parallel**. You give it a giant list, it splits work across CPU cores. For our small exam datasets, that doesn't matter — but the same code would work on millions of rows.
+
+## B.2 — Two ways to handle data: RDD vs DataFrame
+
+| | RDD | DataFrame |
+|---|---|---|
+| What it is | A "distributed list" of items | A "distributed table" with columns |
+| You operate by | `map`, `filter`, `reduceByKey` | SQL-like: `select`, `filter`, `groupBy` |
+| Used in exam for | Question (a) — reduceByKey stuff | Question (b) — Linear Regression |
+
+Both are Spark, just two ways of looking at the same data.
+
+## B.3 — `sc` vs `spark` (don't get confused)
+
+```python
+spark = SparkSession.builder.master("local[*]").getOrCreate()
+sc = spark.sparkContext
+```
+
+- **`sc`** → the old "remote control" — used for **RDD** code (Question a).
+- **`spark`** → the new "remote control" — used for **DataFrame/SQL** code (Question b).
+
+You'll need both. **Always run the SparkSession cell first** in your notebook.
+
+## B.4 — Transformations vs Actions
+
+Spark is "lazy". When you write:
+
+```python
+rdd.map(...).filter(...)
+```
+
+Nothing actually happens yet. Spark just remembers the plan. It only **runs** when you call an "action" like:
+
+- `.collect()` → bring everything back as a Python list
+- `.first()` → grab the first item
+- `.count()` → count the items
+- `.saveAsTextFile(...)` → save to disk
+- `.show()` (DataFrames) → print the table
+
+So the pattern is always: **transform → transform → transform → action**.
 
 ---
 
-## Design Decisions
+# PART C — Always-First Cell
 
-- **No paid APIs**: Uses free OpenStreetMap tiles and the public OSRM routing API. All data is mock-generated.
-- **SQLite over Postgres**: Simpler for development. The entire DB re-seeds in <1 second on city switch.
-- **OSRM fallback**: If the public OSRM server is slow or down, drivers still move along straight-line interpolated routes.
-- **Docker exec for HDFS/Spark**: The backend shells into Docker containers to run HDFS commands and Spark submits, avoiding the need to install Hadoop/Spark locally.
-- **Module-level route cache**: Routes are cached in Python dicts rather than Redis, keeping the dependency footprint minimal.
-- **Client-side rendering**: All frontend pages use `"use client"` since they depend on WebSocket subscriptions, Leaflet (which needs the DOM), and frequent state updates.
+Run this **at the top of every notebook**, every time. Nothing else works without it.
+
+```python
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.master("local[*]").appName("BDA").getOrCreate()
+sc = spark.sparkContext
+sc.setLogLevel("ERROR")
+print("Spark version:", spark.version)
+```
+
+| Line | Plain English |
+|---|---|
+| `from pyspark.sql import SparkSession` | Pull the `SparkSession` class out of PySpark |
+| `SparkSession.builder.master("local[*]")` | "I want a Spark session that runs locally on my laptop, using all CPU cores (`*`)" |
+| `.appName("BDA")` | Just a name (visible in Spark UI). Cosmetic. |
+| `.getOrCreate()` | If a session already exists, reuse it. Else, create one. Returns the session. |
+| `sc = spark.sparkContext` | Get the older RDD interface. Save it as `sc`. |
+| `sc.setLogLevel("ERROR")` | "Hide the noisy INFO/WARN logs. Only show errors." |
+| `print(...)` | Sanity check that it worked. You should see `Spark version: 3.5.1`. |
+
+---
+
+# PART D — SET 1 (rides.csv) Walkthrough
+
+Dataset:
+
+```
+ride_id, driver_id, distance, fare, city
+1, D1, 10, 200, Mumbai
+2, D2, 5,  120, Delhi
+3, D1, 8,  160, Mumbai
+4, D3, 12, 250, Pune
+5, D2, 7,  140, Delhi
+```
+
+## D.0 — Make the CSV inside the notebook
+
+You don't need to "find" or "upload" the file. Just create it inline.
+
+```python
+csv_text = """ride_id,driver_id,distance,fare,city
+1,D1,10,200,Mumbai
+2,D2,5,120,Delhi
+3,D1,8,160,Mumbai
+4,D3,12,250,Pune
+5,D2,7,140,Delhi
+"""
+with open("rides.csv", "w") as f:
+    f.write(csv_text)
+print("rides.csv created")
+```
+
+| Line | Plain English |
+|---|---|
+| `csv_text = """..."""` | Triple-quoted strings let you write multiple lines without escape characters. The variable holds the raw CSV text. |
+| `with open("rides.csv", "w") as f:` | Open a file called `rides.csv` for **w**riting. The `with` block auto-closes the file when done. |
+| `f.write(csv_text)` | Write our string into the file. |
+| `print(...)` | Confirm it worked. |
+
+After this, a real `rides.csv` file lives in your folder. Spark can read it.
+
+---
+
+## D.1 — Question (a): Total fare per city using reduceByKey
+
+### The 6-step pattern (memorize this shape):
+
+1. **Read** file as RDD
+2. **Remove** header
+3. **Map** to (key, value) pairs
+4. **Reduce** by key
+5. **Display**
+6. **Save**
+
+### Full code:
+
+```python
+# Step 1: Read the file as an RDD
+rdd_raw = sc.textFile("rides.csv")
+
+# Step 2: Remove the header row
+header = rdd_raw.first()
+rdd = rdd_raw.filter(lambda line: line != header)
+
+# Step 3: Make (city, fare) pairs
+pairs = rdd.map(lambda line: (line.split(",")[4], float(line.split(",")[3])))
+
+# Step 4: Sum fares per city
+totals = pairs.reduceByKey(lambda a, b: a + b)
+
+# Step 5: Display
+for city, total in totals.collect():
+    print(city, "->", total)
+
+# Step 6: Save output
+import shutil, os
+if os.path.exists("output_a"): shutil.rmtree("output_a")
+totals.saveAsTextFile("output_a")
+```
+
+### Line by line:
+
+#### Step 1
+```python
+rdd_raw = sc.textFile("rides.csv")
+```
+- `sc.textFile(filename)` → reads the file. **Each line of the file becomes one item in the RDD.**
+- `rdd_raw` is now conceptually:
+  ```
+  [
+    "ride_id,driver_id,distance,fare,city",  ← header
+    "1,D1,10,200,Mumbai",
+    "2,D2,5,120,Delhi",
+    "3,D1,8,160,Mumbai",
+    "4,D3,12,250,Pune",
+    "5,D2,7,140,Delhi"
+  ]
+  ```
+
+#### Step 2
+```python
+header = rdd_raw.first()
+rdd = rdd_raw.filter(lambda line: line != header)
+```
+- `rdd_raw.first()` → returns the first line: `"ride_id,driver_id,distance,fare,city"`. Saves it in the variable `header`.
+- `rdd_raw.filter(lambda line: line != header)` → for every line in `rdd_raw`, keep it only if it is **not equal to** the header line. That removes the header from the RDD.
+- After this step, `rdd` only has the 5 data rows, no header.
+
+> Why filter the header? Because in step 3 we'll do `float(...)` on the fare column. If the header is still there, it would try `float("fare")` and crash.
+
+#### Step 3 — the most important line
+```python
+pairs = rdd.map(lambda line: (line.split(",")[4], float(line.split(",")[3])))
+```
+- `.map(f)` → apply function `f` to each element. The result is a new RDD.
+- The lambda function `lambda line: (line.split(",")[4], float(line.split(",")[3]))` does:
+  - `line.split(",")` → splits the line into a list of fields.
+  - `[4]` → grabs position 4, which is `city`.
+  - `[3]` → grabs position 3, which is `fare` (as a string).
+  - `float(...)` → converts `"200"` into the number `200.0`.
+  - Wrap them as `(city, fare)` tuple.
+- After this step, `pairs` is:
+  ```
+  [
+    ("Mumbai", 200.0),
+    ("Delhi",  120.0),
+    ("Mumbai", 160.0),
+    ("Pune",   250.0),
+    ("Delhi",  140.0)
+  ]
+  ```
+
+> 💡 **Counting tip**: To know which index to use, count the columns of the CSV header **starting at 0**. Always.
+
+#### Step 4 — the magic
+```python
+totals = pairs.reduceByKey(lambda a, b: a + b)
+```
+- `reduceByKey` works only on RDDs of `(key, value)` pairs.
+- It groups all pairs by their **key** (first element).
+- Then for each group, it combines the values pairwise using the function you give it.
+- `lambda a, b: a + b` means "add two values together".
+- So Mumbai's values `[200.0, 160.0]` → combined: `200 + 160 = 360`.
+- Delhi's `[120.0, 140.0]` → `260`.
+- Pune's `[250.0]` → `250` (only one, no combining needed).
+- Result:
+  ```
+  [
+    ("Mumbai", 360.0),
+    ("Delhi",  260.0),
+    ("Pune",   250.0)
+  ]
+  ```
+
+#### Step 5 — display
+```python
+for city, total in totals.collect():
+    print(city, "->", total)
+```
+- `.collect()` → "**action**" — pulls the data from Spark workers back to normal Python. Returns a regular Python list.
+- The for-loop iterates the list and unpacks each tuple into `city` and `total`.
+- Output:
+  ```
+  Mumbai -> 360.0
+  Delhi -> 260.0
+  Pune -> 250.0
+  ```
+
+#### Step 6 — save
+```python
+import shutil, os
+if os.path.exists("output_a"): shutil.rmtree("output_a")
+totals.saveAsTextFile("output_a")
+```
+- Spark **refuses** to write to an existing folder. So we delete `output_a` first if it exists.
+- `os.path.exists("output_a")` → True if the folder is there.
+- `shutil.rmtree("output_a")` → recursively delete the folder.
+- `totals.saveAsTextFile("output_a")` → write the RDD into a folder called `output_a`. Inside, you'll find files named `part-00000` etc., containing the text output.
+
+### Variants you should know
+
+If they ask **count** instead of **sum**:
+```python
+pairs = rdd.map(lambda line: (line.split(",")[1], 1))   # (driver_id, 1)
+counts = pairs.reduceByKey(lambda a, b: a + b)          # add the 1s
+```
+
+If they ask **max**:
+```python
+maxes = pairs.reduceByKey(lambda a, b: max(a, b))
+```
+
+If they ask **average** (sum + count, then divide):
+```python
+pairs = rdd.map(lambda line: (line.split(",")[4], (float(line.split(",")[3]), 1)))
+combined = pairs.reduceByKey(lambda a, b: (a[0]+b[0], a[1]+b[1]))
+avg = combined.mapValues(lambda v: v[0] / v[1])
+```
+
+If they ask **sort by value descending**:
+```python
+sorted_desc = totals.sortBy(lambda kv: kv[1], ascending=False)
+```
+
+---
+
+## D.2 — Question (b): Linear Regression: distance → fare
+
+> "Use distance as feature, fare as label, train Linear Regression, show predictions, print coefficients & intercept."
+
+### What is Linear Regression?
+
+It draws a straight line `y = m·x + c` that best fits the data.
+- `y` = label (what we want to predict — here, `fare`)
+- `x` = feature (what we use to predict — here, `distance`)
+- `m` = coefficient (slope)
+- `c` = intercept
+
+So we're saying: "predict fare based on distance, and tell me the formula."
+
+### Full code:
+
+```python
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.regression import LinearRegression
+
+# Step 1: Read CSV as a DataFrame
+df = spark.read.csv("rides.csv", header=True, inferSchema=True)
+df.show()
+
+# Step 2: Build feature vector
+assembler = VectorAssembler(inputCols=["distance"], outputCol="features")
+data = assembler.transform(df).select("features", df["fare"].alias("label"))
+data.show()
+
+# Step 3: Train the model
+lr = LinearRegression(featuresCol="features", labelCol="label")
+model = lr.fit(data)
+
+# Step 4: Predictions
+predictions = model.transform(data)
+predictions.select("features", "label", "prediction").show()
+
+# Step 5: Coefficients & intercept
+print("Coefficients:", model.coefficients)
+print("Intercept:", model.intercept)
+```
+
+### Line by line:
+
+#### Imports
+```python
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.regression import LinearRegression
+```
+- `VectorAssembler` → the helper that packages columns into a vector.
+- `LinearRegression` → the model class itself.
+
+#### Step 1
+```python
+df = spark.read.csv("rides.csv", header=True, inferSchema=True)
+```
+- `spark.read.csv(...)` → reads the CSV as a **DataFrame** (a table).
+- `header=True` → the first row contains column names (not data).
+- `inferSchema=True` → Spark guesses the types automatically — `distance` becomes int, `fare` becomes int. This means **you don't have to do `float(...)` like in RDD code.**
+- `df.show()` → prints the DataFrame as a nice formatted table.
+
+#### Step 2 — VectorAssembler
+```python
+assembler = VectorAssembler(inputCols=["distance"], outputCol="features")
+data = assembler.transform(df).select("features", df["fare"].alias("label"))
+data.show()
+```
+
+Why is this even needed? PySpark ML algorithms refuse to take individual columns. They demand **one column** where each row is a vector containing all the feature values.
+
+- `VectorAssembler(inputCols=["distance"], outputCol="features")` → "Take the column called `distance` and pack it into a vector. Put the result into a new column called `features`."
+- `assembler.transform(df)` → run the assembler. Returns a new DataFrame with the extra `features` column added.
+- `.select("features", df["fare"].alias("label"))` → keep only two columns:
+  - `features` (the vector)
+  - `fare` renamed to `label` (because Spark ML expects exactly the names `features` and `label` by default)
+- `.alias("label")` → just renames `fare` → `label`.
+
+After this, `data` looks like:
+
+```
++--------+-----+
+|features|label|
++--------+-----+
+|  [10.0]|  200|
+|  [5.0] |  120|
+|  [8.0] |  160|
+|  [12.0]|  250|
+|  [7.0] |  140|
++--------+-----+
+```
+
+#### Step 3 — train
+```python
+lr = LinearRegression(featuresCol="features", labelCol="label")
+model = lr.fit(data)
+```
+- `LinearRegression(featuresCol=..., labelCol=...)` → create the model object. Tell it which columns to use.
+- `.fit(data)` → **train it on `data`**. This is the actual learning step. Returns a fitted model.
+
+#### Step 4 — predict
+```python
+predictions = model.transform(data)
+predictions.select("features", "label", "prediction").show()
+```
+- `model.transform(data)` → run the trained model on the data. Adds a new column called `prediction`.
+- `.select(...)` → just pick the columns you want to display.
+- The output shows `features`, `label` (true value), `prediction` (model's guess) side-by-side.
+
+#### Step 5 — answer the question
+```python
+print("Coefficients:", model.coefficients)
+print("Intercept:", model.intercept)
+```
+- `model.coefficients` → the slope `m` for each feature. It's a vector because there could be many features.
+- `model.intercept` → the intercept `c`.
+
+So the formula learned is: `fare ≈ coefficient × distance + intercept`.
+
+---
+
+## D.3 — Question (c): Graph: Driver → City, degree centrality
+
+### What is a graph here?
+
+In CS, a graph = **vertices (nodes)** connected by **edges**. Think of a map: cities (vertices) connected by roads (edges).
+
+The question says "Driver → City" — that means each row in the CSV is an edge from a driver to a city.
+
+### What is degree centrality?
+
+For each node = (number of edges connected to it) / (max possible edges).
+- Big number = important/connected node.
+- Small number = isolated.
+
+### Full code:
+
+```python
+import networkx as nx
+import pandas as pd
+
+# Step 1: Read CSV with pandas (easier for graphs than Spark)
+pdf = pd.read_csv("rides.csv")
+print(pdf)
+
+# Step 2: Create directed graph (because the question says Driver → City)
+G = nx.DiGraph()
+
+# Step 3: Add vertices (nodes)
+for d in pdf["driver_id"].unique():
+    G.add_node(d, type="driver")
+for c in pdf["city"].unique():
+    G.add_node(c, type="city")
+
+# Step 4: Add edges
+for _, row in pdf.iterrows():
+    G.add_edge(row["driver_id"], row["city"])
+
+# Step 5: Show vertices and edges
+print("Vertices:", list(G.nodes))
+print("Edges:", list(G.edges))
+
+# Step 6: Degree centrality
+centrality = nx.degree_centrality(G)
+for node, score in centrality.items():
+    print(f"{node}: {score:.3f}")
+
+# Step 7 (optional): Draw it
+import matplotlib.pyplot as plt
+nx.draw(G, with_labels=True, node_color="lightblue", node_size=1500, arrows=True)
+plt.show()
+```
+
+### Line by line:
+
+#### Imports
+```python
+import networkx as nx        # graph library
+import pandas as pd          # easy CSV reading
+```
+- `nx` and `pd` are just shorter nicknames so you don't type the full names every time.
+
+#### Step 1
+```python
+pdf = pd.read_csv("rides.csv")
+print(pdf)
+```
+- `pd.read_csv(...)` → reads the CSV into a **pandas** DataFrame (different from Spark DataFrame, but similar idea — a table).
+- `pdf` is shorter for "pandas DataFrame".
+- Why pandas instead of Spark for graphs? Pandas is simpler for tiny data, and NetworkX works directly with pandas data.
+
+#### Step 2
+```python
+G = nx.DiGraph()
+```
+- `nx.DiGraph()` → make an empty **D**irected graph. "Directed" means edges have arrows (a → b is different from b → a).
+- Use `nx.Graph()` if the question doesn't show an arrow.
+
+#### Step 3 — add vertices
+```python
+for d in pdf["driver_id"].unique():
+    G.add_node(d, type="driver")
+for c in pdf["city"].unique():
+    G.add_node(c, type="city")
+```
+- `pdf["driver_id"]` → the column of all driver IDs.
+- `.unique()` → keep only distinct values: `["D1", "D2", "D3"]`.
+- For each one: `G.add_node(d, type="driver")` → add it as a node, with extra label `type="driver"` (optional, just helps).
+- Same loop for cities: `["Mumbai", "Delhi", "Pune"]`.
+
+#### Step 4 — add edges
+```python
+for _, row in pdf.iterrows():
+    G.add_edge(row["driver_id"], row["city"])
+```
+- `pdf.iterrows()` → loops over every row of the DataFrame. Each iteration gives `(index, row)`.
+- `_` is a throwaway variable for the index (we don't care about it).
+- `row["driver_id"]` and `row["city"]` → grab those values from the row.
+- `G.add_edge(a, b)` → add an edge from `a` to `b`.
+
+#### Step 5 — display
+```python
+print("Vertices:", list(G.nodes))
+print("Edges:", list(G.edges))
+```
+- `G.nodes` → all vertices.
+- `G.edges` → all edges as tuples like `("D1", "Mumbai")`.
+
+#### Step 6 — degree centrality
+```python
+centrality = nx.degree_centrality(G)
+for node, score in centrality.items():
+    print(f"{node}: {score:.3f}")
+```
+- `nx.degree_centrality(G)` → returns a **dictionary** like `{"D1": 0.4, "D2": 0.4, ...}`.
+- `.items()` → iterate over key-value pairs of the dict.
+- `f"{node}: {score:.3f}"` → "f-string" — format the score to 3 decimals.
+
+#### Step 7 — draw (optional, but pretty)
+```python
+import matplotlib.pyplot as plt
+nx.draw(G, with_labels=True, node_color="lightblue", node_size=1500, arrows=True)
+plt.show()
+```
+- `nx.draw(...)` → render the graph.
+- `with_labels=True` → show node names on each circle.
+- `arrows=True` → show direction arrows (since it's a directed graph).
+- `plt.show()` → make the plot appear in the notebook.
+
+---
+
+# PART E — SET 2 (delivery.csv) Walkthrough
+
+Dataset:
+
+```
+delivery_id, agent_id, distance, delivery_time, zone
+1, A1, 5,  30, Zone1
+2, A2, 8,  45, Zone2
+3, A1, 6,  35, Zone1
+4, A3, 10, 60, Zone3
+5, A2, 7,  40, Zone2
+```
+
+> **The pattern is identical to Set 1.** Only the column names and indexes change. Plus question (a) wants you to **sort the result in descending order**.
+
+## E.0 — Make the CSV
+
+```python
+csv_text = """delivery_id,agent_id,distance,delivery_time,zone
+1,A1,5,30,Zone1
+2,A2,8,45,Zone2
+3,A1,6,35,Zone1
+4,A3,10,60,Zone3
+5,A2,7,40,Zone2
+"""
+with open("delivery.csv","w") as f:
+    f.write(csv_text)
+print("delivery.csv created")
+```
+
+## E.1 — Question (a): Total delivery_time per zone, sorted desc
+
+```python
+rdd_raw = sc.textFile("delivery.csv")
+header = rdd_raw.first()
+rdd = rdd_raw.filter(lambda line: line != header)
+
+# Indexes: 0=delivery_id, 1=agent_id, 2=distance, 3=delivery_time, 4=zone
+pairs = rdd.map(lambda line: (line.split(",")[4], float(line.split(",")[3])))
+totals = pairs.reduceByKey(lambda a, b: a + b)
+
+# NEW: sort descending by total
+sorted_desc = totals.sortBy(lambda kv: kv[1], ascending=False)
+
+for zone, total in sorted_desc.collect():
+    print(zone, "->", total)
+
+import shutil, os
+if os.path.exists("output_a"): shutil.rmtree("output_a")
+sorted_desc.saveAsTextFile("output_a")
+```
+
+### What's new vs Set 1: just one line
+
+```python
+sorted_desc = totals.sortBy(lambda kv: kv[1], ascending=False)
+```
+- `sortBy(f)` → sort the RDD using function `f` to extract the sort key.
+- `lambda kv: kv[1]` → for each tuple `(key, value)`, sort by `value` (which is at index 1).
+- `ascending=False` → biggest first.
+
+Expected output:
+```
+Zone2 -> 85.0   (45 + 40)
+Zone1 -> 65.0   (30 + 35)
+Zone3 -> 60.0
+```
+
+## E.2 — Question (b): Linear Regression distance → delivery_time
+
+**Identical to Set 1 (b)**, just change file and column names:
+
+```python
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.regression import LinearRegression
+
+df = spark.read.csv("delivery.csv", header=True, inferSchema=True)
+df.show()
+
+assembler = VectorAssembler(inputCols=["distance"], outputCol="features")
+data = assembler.transform(df).select("features", df["delivery_time"].alias("label"))
+data.show()
+
+lr = LinearRegression(featuresCol="features", labelCol="label")
+model = lr.fit(data)
+
+predictions = model.transform(data)
+predictions.select("features", "label", "prediction").show()
+
+print("Coefficients:", model.coefficients)
+print("Intercept:", model.intercept)
+```
+
+**Differences from Set 1 (b):** only `"rides.csv"` → `"delivery.csv"` and `"fare"` → `"delivery_time"`. Everything else identical.
+
+## E.3 — Question (c): Graph Agent → Zone, degree centrality
+
+**Identical to Set 1 (c)**, just rename columns:
+
+```python
+import networkx as nx
+import pandas as pd
+
+pdf = pd.read_csv("delivery.csv")
+print(pdf)
+
+G = nx.DiGraph()
+
+for a in pdf["agent_id"].unique():
+    G.add_node(a, type="agent")
+for z in pdf["zone"].unique():
+    G.add_node(z, type="zone")
+
+for _, row in pdf.iterrows():
+    G.add_edge(row["agent_id"], row["zone"])
+
+print("Vertices:", list(G.nodes))
+print("Edges:", list(G.edges))
+
+centrality = nx.degree_centrality(G)
+for node, score in centrality.items():
+    print(f"{node}: {score:.3f}")
+
+import matplotlib.pyplot as plt
+nx.draw(G, with_labels=True, node_color="lightgreen", node_size=1500, arrows=True)
+plt.show()
+```
+
+**Differences from Set 1 (c):** `rides.csv` → `delivery.csv`, `driver_id` → `agent_id`, `city` → `zone`. Everything else identical.
+
+---
+
+# PART F — Pattern Recognition Cheat Sheet
+
+When you see a question on the exam, identify the type and apply the pattern.
+
+## F.1 — Pattern: RDD reduceByKey
+
+**Signal words:** "key-value pairs", "reduceByKey", "total per...", "count per...".
+
+**Skeleton:**
+```python
+rdd = sc.textFile(FILE).filter(lambda l: l != HEADER_LINE)
+pairs = rdd.map(lambda l: (l.split(",")[KEY_INDEX], TYPE(l.split(",")[VALUE_INDEX])))
+result = pairs.reduceByKey(lambda a, b: COMBINE(a, b))
+```
+
+Fill in the blanks:
+- `FILE` = the CSV name
+- `HEADER_LINE` = whatever you got from `.first()`
+- `KEY_INDEX` = column position to group by (0-based!)
+- `VALUE_INDEX` = column position to combine
+- `TYPE` = `float` or `int` (numbers) or remove it (strings)
+- `COMBINE` = `+` (sum), `max`, `min`, `lambda a,b: a+1` (count), etc.
+
+## F.2 — Pattern: Linear Regression
+
+**Signal words:** "feature", "label", "Linear Regression", "coefficients", "intercept".
+
+**Skeleton (5 lines):**
+```python
+df = spark.read.csv(FILE, header=True, inferSchema=True)
+data = VectorAssembler(inputCols=[FEATURE_COL], outputCol="features").transform(df).select("features", df[LABEL_COL].alias("label"))
+model = LinearRegression(featuresCol="features", labelCol="label").fit(data)
+model.transform(data).show()
+print(model.coefficients, model.intercept)
+```
+
+Fill in:
+- `FILE` = the CSV name
+- `FEATURE_COL` = column used as input (e.g. `"distance"`)
+- `LABEL_COL` = column to predict (e.g. `"fare"`)
+
+## F.3 — Pattern: NetworkX Graph
+
+**Signal words:** "graph", "vertices", "edges", "degree centrality", "X → Y".
+
+**Skeleton:**
+```python
+pdf = pd.read_csv(FILE)
+G = nx.DiGraph()                                      # use nx.Graph() if no arrow
+for x in pdf[COL_FROM].unique(): G.add_node(x)
+for y in pdf[COL_TO].unique():   G.add_node(y)
+for _, row in pdf.iterrows():
+    G.add_edge(row[COL_FROM], row[COL_TO])
+print(nx.degree_centrality(G))
+```
+
+Fill in:
+- `FILE` = CSV name
+- `COL_FROM` = column for source nodes (left of arrow)
+- `COL_TO` = column for destination nodes (right of arrow)
+
+---
+
+# PART G — When Things Go Wrong
+
+| Error you see | What's likely wrong | Fix |
+|---|---|---|
+| `NameError: name 'spark' is not defined` | You didn't run the SparkSession cell | Run the first cell |
+| `Path output_a already exists` | You ran `saveAsTextFile` twice | The `shutil.rmtree(...)` line should handle this. Re-run that cell. |
+| `ValueError: could not convert string to float: 'fare'` | You forgot to skip the header | Make sure the `filter(lambda l: l != header)` line ran |
+| `IndexError: list index out of range` | Wrong column index in `.split(",")[N]` | Recount columns starting at 0 |
+| `Column 'X' not found` | Typo in column name | `print(df.columns)` to see exact names |
+| Notebook spinner stuck forever | Spark hung | Kernel menu → Restart Kernel → re-run from top |
+| `ModuleNotFoundError: No module named 'pyspark'` | You're running plain Python, not in the spark-bda container | Use Jupyter inside Docker via `start.sh` |
+
+---
+
+# PART H — The 30-Second Pre-Exam Recap
+
+1. `bash ~/Desktop/bdaexam/start.sh` → Jupyter opens.
+2. New notebook → first cell = SparkSession (Part C).
+3. Second cell = create CSV (Part D.0 / E.0).
+4. Read question → identify pattern → apply skeleton (Part F).
+5. Run cells with **Shift+Enter**. Read output. Move on.
+6. Save with **Cmd+S** when done.
+
+You've got this. 🚀
